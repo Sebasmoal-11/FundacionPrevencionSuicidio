@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Asistente Virtual";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
+}
+
+<div class="container-fluid px-3 px-md-4">
+    <div class="chat-container">
+
+        <!-- PANEL LATERAL -->
+        <aside class="chat-sidebar">
+
+            <h4>Fundación</h4>
+
+            <button type="button"
+                    class="new-chat"
+                    id="btnNuevaConversacion">
+                <i class="bi bi-plus-lg"></i>
+                Nueva conversación
+            </button>
+
+            <div class="sidebar-title">
+                CONVERSACIONES RECIENTES
+            </div>
+
+            <div id="listaConversaciones">
+            </div>
+
+        </aside>
+
+        <!-- ÁREA PRINCIPAL -->
+        <main class="chat-main">
+
+            <!-- ENCABEZADO -->
+            <header class="chat-header">
+
+             <div>
+                    <div class="online-status">
+                        <span class="status-dot"></span>
+                        Disponible para ayudarte
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- ÁREA DE MENSAJES -->
+            <div class="chat-messages" id="areaMensajes">
+
+                <div class="welcome-message">
+
+                    <h3>¡Hola! Bienvenido</h3>
+
+                    <p>
+                        Estoy aquí para
+                        escucharte, orientarte y ofrecerte un espacio
+                        de confianza para conversar
+                    </p>
+
+                    <p>
+                        ¿Qué te gustaría conversar hoy?
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- CAMPO DE MENSAJE -->
+            <div class="chat-input-area">
+
+                <div class="chat-input">
+
+                    <input type="text"
+                           id="mensajeInput"
+                           placeholder="Escribe tu mensaje..."
+                           aria-label="Escribe tu mensaje" />
+
+                    <button type="button"
+                            class="send-button"
+                            id="btnEnviarMensaje"
+                            aria-label="Enviar mensaje">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+
+                </div>
+
+                <div class="chat-disclaimer">
+                    Este asistente brinda orientación y acompañamiento.
+                    No sustituye la atención profesional.
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<script src="~/js/chatbot.js" asp-append-version="true"></script>

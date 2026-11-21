@@ -1,0 +1,108 @@
+[
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "EliminarConversacion",
+    "RelativePath": "Chatbot/EliminarConversacion/{idConversacion}/{cedulaUsuario}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idConversacion",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "cedulaUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "EnviarMensaje",
+    "RelativePath": "Chatbot/EnviarMensaje",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "solicitud",
+        "Type": "Proyecto.Controllers.ChatbotController\u002BEnviarMensajeChatbotRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "IniciarConversacion",
+    "RelativePath": "Chatbot/IniciarConversacion",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "solicitud",
+        "Type": "Proyecto.Controllers.ChatbotController\u002BIniciarConversacionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "ObtenerConversaciones",
+    "RelativePath": "Chatbot/ObtenerConversaciones/{cedulaUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cedulaUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "ObtenerMensajes",
+    "RelativePath": "Chatbot/ObtenerMensajes/{idConversacion}/{cedulaUsuario}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idConversacion",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "cedulaUsuario",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Proyecto.Controllers.ChatbotController",
+    "Method": "ProbarGemini",
+    "RelativePath": "Chatbot/ProbarGemini",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "solicitud",
+        "Type": "Proyecto.Controllers.ChatbotController\u002BMensajeChatbotRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
