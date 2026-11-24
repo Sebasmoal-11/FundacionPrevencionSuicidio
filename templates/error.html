@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso{% endblock %}
+
+{% block contenido %}
+  <h1>Acceso</h1>
+  <p role="alert">{{ mensaje }}</p>
+  <a href="{{ url_for('inicio') }}">Volver al inicio</a>
+{% endblock %}

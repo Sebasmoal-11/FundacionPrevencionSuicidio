@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% set titulo = "Acceso del personal" if tipo == "empleado" else "Iniciar sesión" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+  <h1>{{ titulo }}</h1>
+
+  {% if error %}
+    <p class="mensaje error" role="alert">{{ error }}</p>
+  {% endif %}
+
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+
+    <div class="campo">
+      <label for="correo">Correo electrónico</label>
+      <input id="correo" name="correo" type="email" autocomplete="username"
+        maxlength="150" value="{{ correo }}" required>
+    </div>
+
+    <div class="campo">
+      <label for="contrasena">Contraseña</label>
+      <input id="contrasena" name="contrasena" type="password"
+        autocomplete="current-password" maxlength="128" required>
+    </div>
+
+    <button type="submit">Iniciar sesión</button>
+  </form>
+
+  <nav aria-label="Opciones de acceso">
+    {% if tipo == "usuario" %}
+      <a href="{{ url_for('registro') }}">Crear cuenta</a>
+      <a href="{{ url_for('ingreso_personal') }}">Acceso del personal</a>
+    {% else %}
+      <a href="{{ url_for('ingreso') }}">Acceso de usuarios</a>
+    {% endif %}
+  </nav>
+{% endblock %}

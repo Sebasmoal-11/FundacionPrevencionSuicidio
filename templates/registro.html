@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta{% endblock %}
+
+{% macro campo(nombre, etiqueta, tipo, autocompletar, maximo, minimo=0) %}
+  <div class="campo{% if nombre in ('cedula', 'nombre') %} campo-{{ nombre }}{% elif nombre == 'correo' %} ancho-completo{% endif %}">
+    <label for="{{ nombre }}">{{ etiqueta }}</label>
+    <input id="{{ nombre }}" name="{{ nombre }}" type="{{ tipo }}"
+      autocomplete="{{ autocompletar }}" maxlength="{{ maximo }}"
+      {% if minimo %}minlength="{{ minimo }}"{% endif %}
+      {% if nombre == 'cedula' %}inputmode="numeric" pattern="[0-9]{1,10}"{% endif %}
+      {% if errores[nombre] %}aria-invalid="true" aria-describedby="{{ nombre }}-error"
+      {% elif nombre == 'contrasena' %}aria-describedby="ayuda-contrasena"{% endif %}
+      {% if tipo != 'password' %}value="{{ datos.get(nombre, '') }}"{% endif %}
+      required>
+
+    {% if nombre == 'contrasena' %}
+      <small id="ayuda-contrasena">Use entre 12 y 128 caracteres.</small>
+    {% endif %}
+    {% if errores[nombre] %}
+      <small class="error" id="{{ nombre }}-error">{{ errores[nombre] }}</small>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% block contenido %}
+  <h1>Crear cuenta</h1>
+
+  {% if errores.general %}
+    <p class="mensaje error" role="alert">{{ errores.general }}</p>
+  {% endif %}
+
+  <form method="post" class="formulario-registro">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+
+    {{ campo("cedula", "Cédula", "text", "off", 10) }}
+
+    {% for nombre, etiqueta in nombres.items() %}
+      {{ campo(nombre, etiqueta, "text", "given-name" if nombre == "nombre" else "family-name" if nombre == "primer_apellido" else "off", 80) }}
+    {% endfor %}
+
+    {{ campo("correo", "Correo electrónico", "email", "email", 150) }}
+    {{ campo("contrasena", "Contraseña", "password", "new-password", 128, 12) }}
+    {{ campo("confirmacion", "Confirmar contraseña", "password", "new-password", 128, 12) }}
+
+    <button type="submit">Crear cuenta</button>
+  </form>
+
+  <nav aria-label="Opciones de acceso">
+    <a href="{{ url_for('ingreso') }}">Volver al inicio de sesión</a>
+  </nav>
+{% endblock %}

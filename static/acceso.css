@@ -1,0 +1,185 @@
+:root {
+  --tinta: #26243c;
+  --papel: #fbf7ef;
+  --superficie: #fffdf8;
+  --acento: #4f3765;
+  --borde: #ded5ca;
+  --foco: #75528b;
+  font-family: system-ui, sans-serif;
+  color: var(--tinta);
+  background: var(--papel);
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.15rem clamp(1rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--borde);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  color: var(--tinta);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.marca-simbolo {
+  flex: 0 0 1.55rem;
+  height: 1.55rem;
+  border-radius: 50% 50% 45% 12%;
+  background: linear-gradient(140deg, #ae86a4 48%, #4f3765 49%);
+}
+
+.acceso {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  width: min(62rem, calc(100% - 2rem));
+  margin: clamp(1.5rem, 6vw, 4.5rem) auto;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 1.65rem;
+  background: var(--superficie);
+}
+
+.arte {
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 5% 0%, #715383, #392b52 72%);
+}
+
+.arte::before,
+.arte::after {
+  content: "";
+  position: absolute;
+  width: 125%;
+  aspect-ratio: 1;
+  border: 1px solid #f0d6dd44;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.arte::after { width: 150%; }
+
+.arte span {
+  display: block;
+  width: 64%;
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.arte span::before,
+.arte span::after {
+  content: "";
+  position: absolute;
+  width: 61%;
+  height: 86%;
+  top: 7%;
+  border-radius: 50% 50% 50% 8%;
+  transform: rotate(24deg);
+}
+
+.arte span::before {
+  left: 8%;
+  background: linear-gradient(155deg, #eacedc, #ab83ac);
+}
+
+.arte span::after {
+  right: 8%;
+  background: linear-gradient(145deg, #f7e2cd, #d8a0a0);
+  transform: rotate(204deg);
+  mix-blend-mode: screen;
+}
+
+main {
+  min-width: 0;
+  width: 100%;
+  align-self: center;
+  padding: clamp(1.4rem, 5vw, 3.6rem);
+}
+
+h1 {
+  margin: 0 0 1.6rem;
+  font-family: Georgia, serif;
+  font-size: clamp(2.15rem, 5vw, 3.3rem);
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: 1.02;
+}
+
+a { color: var(--acento); text-underline-offset: .23em; }
+.campo { display: grid; align-content: start; gap: .4rem; margin-bottom: 1rem; }
+label, dt { font-weight: 640; }
+dd { margin: 0 0 1rem; }
+small { color: #655c6d; }
+input, button { font: inherit; }
+
+input:not([type="hidden"]) {
+  width: 100%;
+  min-width: 0;
+  padding: .66rem .75rem;
+  border: 1px solid #938893;
+  border-radius: .65rem;
+  color: var(--tinta);
+  background: #fff;
+}
+
+button {
+  padding: .76rem 1.25rem;
+  border: 1px solid var(--acento);
+  border-radius: .65rem;
+  color: white;
+  background: var(--acento);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+button:hover { background: #39264e; }
+button.secundario { color: var(--acento); background: transparent; }
+button.secundario:hover { background: #f0e4ef; }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
+nav { display: flex; flex-wrap: wrap; gap: .65rem 1.3rem; margin-top: 1.3rem; }
+
+.formulario-registro {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: start;
+  gap: 1rem;
+}
+
+.formulario-registro .campo { grid-column: span 3; margin: 0; }
+.formulario-registro .campo-cedula { grid-column: span 2; }
+.formulario-registro .campo-nombre { grid-column: span 4; }
+.formulario-registro .ancho-completo { grid-column: 1 / -1; }
+.formulario-registro button { justify-self: start; grid-column: 1 / -1; }
+
+.mensaje { padding: .7rem .85rem; border-radius: .6rem; background: #efe6f1; }
+.error { color: #892e3f; }
+.mensaje.error { background: #f8e4e7; }
+input[aria-invalid="true"] { border-color: #892e3f; }
+
+@media (max-width: 700px) {
+  .acceso { grid-template-columns: minmax(0, 1fr); margin-block: 1.2rem; }
+  .arte { height: 7.5rem; }
+  .arte span { width: 8rem; }
+  .arte::before { width: 14rem; }
+  .arte::after { width: 19rem; }
+}
+
+@media (max-width: 460px) {
+  .formulario-registro { grid-template-columns: minmax(0, 1fr); }
+  .formulario-registro .campo { grid-column: 1 / -1; }
+  .formulario-registro .campo-cedula { max-width: 12rem; }
+}

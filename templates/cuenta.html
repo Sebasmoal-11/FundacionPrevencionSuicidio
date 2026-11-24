@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+  <h1>{{ titulo }}</h1>
+  <p>Hola, {{ g.cuenta.nombre }}.</p>
+
+  <dl>
+    <dt>Tipo de cuenta</dt>
+    <dd>{{ "Personal de la fundación" if g.cuenta.tipo == "empleado" else "Usuario" }}</dd>
+
+    {% if g.cuenta.roles %}
+      <dt>Roles</dt>
+      <dd>{{ g.cuenta.roles | sort | join(", ") }}</dd>
+    {% endif %}
+  </dl>
+{% endblock %}
