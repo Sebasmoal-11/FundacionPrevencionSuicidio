@@ -84,7 +84,10 @@ namespace FundacionPrevencion.DA
                 CedulaUsuario = cedulaUsuario,
                 FechaInicio = DateTime.Now,
                 FechaUltimaActividad = DateTime.Now,
-                IdEstadoActivo = 1
+                IdEstadoActivo = await _context.Estadoactivos
+                    .Where(estado => estado.Nombre == "Activo")
+                    .Select(estado => estado.IdEstadoActivo)
+                    .SingleAsync()
             };
 
             _context.Conversacionchatbots.Add(conversacion);

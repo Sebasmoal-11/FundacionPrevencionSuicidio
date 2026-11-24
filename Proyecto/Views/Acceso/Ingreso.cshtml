@@ -1,0 +1,32 @@
+@model Proyecto.Autenticacion.IngresoForm
+@{
+    Layout = "_Layout";
+    bool empleado = ViewData["Empleado"] is true;
+    ViewData["Title"] = empleado ? "Acceso del personal" : "Iniciar sesión";
+}
+<h1>@ViewData["Title"]</h1>
+<div asp-validation-summary="ModelOnly" class="mensaje error" role="alert"></div>
+<form asp-action="@(empleado ? "IngresoPersonal" : "Ingreso")" method="post">
+    <div class="campo">
+        <label asp-for="Correo"></label>
+        <input asp-for="Correo" type="email" maxlength="150" required autocomplete="username" />
+        <span asp-validation-for="Correo" class="error"></span>
+    </div>
+    <div class="campo">
+        <label asp-for="Contrasena"></label>
+        <input asp-for="Contrasena" maxlength="128" required autocomplete="current-password" />
+        <span asp-validation-for="Contrasena" class="error"></span>
+    </div>
+    <button type="submit">Iniciar sesión</button>
+</form>
+<nav aria-label="Opciones de acceso">
+    @if (empleado)
+    {
+        <a asp-action="Ingreso">Acceso de usuarios</a>
+    }
+    else
+    {
+        <a asp-action="Registro">Crear cuenta</a>
+        <a asp-action="IngresoPersonal">Acceso del personal</a>
+    }
+</nav>

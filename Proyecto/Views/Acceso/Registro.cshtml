@@ -1,0 +1,47 @@
+@model Proyecto.Autenticacion.RegistroForm
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Crear cuenta";
+}
+<h1>Crear cuenta</h1>
+<div asp-validation-summary="ModelOnly" class="mensaje error" role="alert"></div>
+<form asp-action="Registro" method="post" class="formulario-registro">
+    <div class="campo campo-cedula">
+        <label asp-for="Cedula"></label>
+        <input asp-for="Cedula" inputmode="numeric" pattern="[0-9]{1,10}" maxlength="10" required />
+        <span asp-validation-for="Cedula" class="error"></span>
+    </div>
+    <div class="campo campo-nombre">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" autocomplete="given-name" maxlength="80" required />
+        <span asp-validation-for="Nombre" class="error"></span>
+    </div>
+    <div class="campo">
+        <label asp-for="PrimerApellido"></label>
+        <input asp-for="PrimerApellido" autocomplete="family-name" maxlength="80" required />
+        <span asp-validation-for="PrimerApellido" class="error"></span>
+    </div>
+    <div class="campo">
+        <label asp-for="SegundoApellido"></label>
+        <input asp-for="SegundoApellido" maxlength="80" required />
+        <span asp-validation-for="SegundoApellido" class="error"></span>
+    </div>
+    <div class="campo ancho-completo">
+        <label asp-for="Correo"></label>
+        <input asp-for="Correo" type="email" autocomplete="email" maxlength="150" required />
+        <span asp-validation-for="Correo" class="error"></span>
+    </div>
+    <div class="campo">
+        <label asp-for="Contrasena"></label>
+        <input asp-for="Contrasena" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="ayuda-contrasena" required />
+        <small id="ayuda-contrasena">Use entre 12 y 128 caracteres.</small>
+        <span asp-validation-for="Contrasena" class="error"></span>
+    </div>
+    <div class="campo">
+        <label asp-for="Confirmacion"></label>
+        <input asp-for="Confirmacion" autocomplete="new-password" minlength="12" maxlength="128" required />
+        <span asp-validation-for="Confirmacion" class="error"></span>
+    </div>
+    <button type="submit">Crear cuenta</button>
+</form>
+<nav aria-label="Opciones de acceso"><a asp-action="Ingreso">Volver al inicio de sesión</a></nav>

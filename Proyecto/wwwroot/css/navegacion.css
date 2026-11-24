@@ -1,0 +1,75 @@
+html {
+  scrollbar-gutter: stable;
+}
+
+.navegacion-fundacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75em;
+  padding: 1.15em clamp(1em, 5vw, 4em);
+  border-bottom: 1px solid #ded5ca;
+  background: #fbf7ef;
+  color: #26243c;
+  font-family: system-ui, sans-serif;
+  font-size: medium;
+  line-height: 1.5;
+}
+
+.navegacion-fundacion .marca {
+  display: inline-flex;
+  align-items: center;
+  gap: .65em;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.navegacion-fundacion .marca-simbolo {
+  flex: 0 0 1.55em;
+  height: 1.55em;
+  border-radius: 50% 50% 45% 12%;
+  background: linear-gradient(140deg, #ae86a4 48%, #4f3765 49%);
+}
+
+.navegacion-fundacion nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .25em .5em;
+  margin: 0;
+}
+
+.navegacion-fundacion form {
+  margin: 0;
+}
+
+.navegacion-fundacion nav a,
+.navegacion-fundacion button {
+  display: inline-block;
+  padding: .45em .7em;
+  border: 1px solid transparent;
+  border-radius: .5em;
+  background: transparent;
+  color: #4f3765;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navegacion-fundacion button {
+  border-color: #4f3765;
+  cursor: pointer;
+}
+
+.navegacion-fundacion nav a:hover,
+.navegacion-fundacion button:hover,
+.navegacion-fundacion [aria-current="page"] {
+  background: #f0e4ef;
+}
+
+.navegacion-fundacion :focus-visible {
+  outline: 3px solid #75528b;
+  outline-offset: 3px;
+}

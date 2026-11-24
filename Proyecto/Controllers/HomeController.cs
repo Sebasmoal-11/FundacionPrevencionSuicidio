@@ -25,11 +25,6 @@ namespace Proyecto.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         // Método temporal para comprobar la conexión con SQL Server.
         public async Task<IActionResult> ProbarConexion()
         {
