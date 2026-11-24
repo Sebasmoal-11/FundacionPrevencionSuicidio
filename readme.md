@@ -12,6 +12,36 @@ La aplicación usa Flask y SQL Server Express. `app.py` contiene los controlador
 - SQL Server Express y SQL Server Management Studio (SSMS).
 - Una instancia local de SQL Server con autenticación mixta y TCP habilitado.
 
+## Configurar SQL Server Express para pruebas locales
+
+Conéctate desde SSMS a `localhost\SQLEXPRESS` con **Windows Authentication**. Si tu instancia tiene otro nombre, usa el que mostró el instalador.
+
+### Activar la autenticación mixta
+
+1. En **Object Explorer**, haz clic derecho sobre el servidor y abre **Properties → Security**.
+2. Selecciona **SQL Server and Windows Authentication mode** y pulsa **OK**. Esto permite que Flask se conecte con el usuario `fundacion_app`.
+
+### Configurar el puerto TCP local
+
+1. Abre **SQL Server Configuration Manager** y ve a **SQL Server Network Configuration → Protocols for SQLEXPRESS**.
+2. Habilita **TCP/IP** y abre sus propiedades. En la pestaña **Protocol**, configura **Listen All** en **No**.
+3. En **IP Addresses**, busca el bloque cuya dirección sea `127.0.0.1`. Configura **Enabled** en **Yes**, deja **TCP Dynamic Ports** vacío y escribe `14330` en **TCP Port**.
+4. Guarda los cambios. Abre **Servicios de Windows** con `services.msc` y reinicia **SQL Server (SQLEXPRESS)** para aplicar ambos cambios.
+
+Vuelve a conectarte en SSMS y comprueba el modo de autenticación:
+
+```sql
+SELECT SERVERPROPERTY('IsIntegratedSecurityOnly') AS solo_autenticacion_windows;
+```
+
+El resultado debe ser `0`. Después, en PowerShell, comprueba el puerto:
+
+```powershell
+Test-NetConnection 127.0.0.1 -Port 14330
+```
+
+Cuando aparezca `TcpTestSucceeded : True`, continúa con **Preparar la base de datos**.
+
 ## Preparar la base de datos
 
 1. Conéctate en SSMS con una cuenta autorizada para administrar la instancia.
