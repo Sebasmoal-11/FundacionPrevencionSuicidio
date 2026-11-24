@@ -13,13 +13,16 @@ namespace FundacionPrevencion.DA
             _context = context;
         }
 
-        // Obtener conversaciones del usuario con el primer mensaje de cada una
+
+        // Obtener conversaciones visibles del usuario con el primer mensaje de cada una
         public async Task<List<Conversacionchatbot>> ObtenerConversacionesUsuario(
             int cedulaUsuario)
         {
             return await _context.Conversacionchatbots
                 .AsNoTracking()
-                .Where(c => c.CedulaUsuario == cedulaUsuario)
+                .Where(c =>
+                    c.CedulaUsuario == cedulaUsuario &&
+                    !c.OcultaUsuario)
                 .Include(c => c.Mensajechatbots
                     .Where(m => m.IdTipoEmisor == 1)
                     .OrderBy(m => m.FechaEnvio)
@@ -28,6 +31,7 @@ namespace FundacionPrevencion.DA
                 .OrderByDescending(c => c.FechaUltimaActividad)
                 .ToListAsync();
         }
+
 
         // Obtener una conversación verificando que pertenezca al usuario
         public async Task<Conversacionchatbot?> ObtenerConversacion(
@@ -84,7 +88,10 @@ namespace FundacionPrevencion.DA
                 CedulaUsuario = cedulaUsuario,
                 FechaInicio = DateTime.Now,
                 FechaUltimaActividad = DateTime.Now,
-                IdEstadoActivo = 1
+                IdEstadoActivo = await _context.Estadoactivos
+                    .Where(estado => estado.Nombre == "Activo")
+                    .Select(estado => estado.IdEstadoActivo)
+                    .SingleAsync()
             };
 
             _context.Conversacionchatbots.Add(conversacion);
@@ -127,32 +134,77 @@ namespace FundacionPrevencion.DA
                     c.CedulaUsuario == cedulaUsuario);
         }
 
-        // Eliminar una conversación y todos sus mensajes
+
+        // Ocultar una conversación del historial del usuario
         public async Task<bool> EliminarConversacion(
             int idConversacion,
             int cedulaUsuario)
         {
             var conversacion = await _context.Conversacionchatbots
-                .Include(c => c.Mensajechatbots)
                 .FirstOrDefaultAsync(c =>
                     c.IdConversacion == idConversacion &&
-                    c.CedulaUsuario == cedulaUsuario);
+                    c.CedulaUsuario == cedulaUsuario &&
+                    !c.OcultaUsuario);
 
             if (conversacion == null)
             {
                 return false;
             }
 
-            // Eliminar primero los mensajes asociados
-            _context.Mensajechatbots.RemoveRange(
-                conversacion.Mensajechatbots);
-
-            // Eliminar la conversación
-            _context.Conversacionchatbots.Remove(conversacion);
+            conversacion.OcultaUsuario = true;
 
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        // Guardar el resultado del análisis de riesgo
+        public async Task<Resultadoanalisi> GuardarResultadoAnalisis(
+            int idMensaje,
+            int idNivelRiesgo,
+            string resultado)
+        {
+            var analisis = new Resultadoanalisi
+            {
+                IdMensaje = idMensaje,
+                IdNivelRiesgo = idNivelRiesgo,
+                Resultado = resultado,
+                FechaAnalisis = DateTime.Now
+            };
+
+            _context.Resultadoanalises.Add(analisis);
+
+            await _context.SaveChangesAsync();
+
+            return analisis;
+        }
+        // Crear una alerta asociada a un análisis de riesgo
+        public async Task<Alertum> CrearAlerta(
+            int idAnalisis,
+            string observaciones)
+        {
+            // Evitar generar alertas duplicadas para el mismo análisis
+            var alertaExistente = await _context.Alerta
+                .FirstOrDefaultAsync(a => a.IdAnalisis == idAnalisis);
+
+            if (alertaExistente != null)
+            {
+                return alertaExistente;
+            }
+
+            var alerta = new Alertum
+            {
+                IdAnalisis = idAnalisis,
+                IdEstadoAlerta = 1, // Pendiente
+                FechaGeneracion = DateTime.Now,
+                Observaciones = observaciones
+            };
+
+            _context.Alerta.Add(alerta);
+
+            await _context.SaveChangesAsync();
+
+            return alerta;
         }
     }
 }

@@ -1,12 +1,17 @@
-﻿
+
 using FundacionPrevencion.BC;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Proyecto.Autenticacion;
 
 
 namespace Proyecto.Controllers
 {
     [ApiController]
+    [Authorize(Policy = "CuentaUsuario")]
+    [AutoValidateAntiforgeryToken]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     [Route("Chatbot")]
     public class ChatbotController : ControllerBase
     {
@@ -17,79 +22,29 @@ namespace Proyecto.Controllers
             _chatbotBC = chatbotBC;
         }
 
-        // Prueba de conexión con Gemini
-        [HttpPost("ProbarGemini")]
-        public async Task<IActionResult> ProbarGemini(
-            [FromBody] MensajeChatbotRequest solicitud)
-        {
-            if (solicitud == null ||
-                string.IsNullOrWhiteSpace(solicitud.Mensaje))
-            {
-                return BadRequest(new
-                {
-                    mensaje = "Debes ingresar un mensaje."
-                });
-            }
-
-            try
-            {
-                string respuesta = await _chatbotBC
-                    .EnviarMensajeGemini(solicitud.Mensaje);
-
-                return Ok(new
-                {
-                    respuesta = respuesta
-                });
-            }
-            catch (HttpRequestException ex)
-            {
-                return StatusCode(502, new
-                {
-                    mensaje = ex.Message
-                });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return StatusCode(500, new
-                {
-                    mensaje = ex.Message
-                });
-            }
-        }
+        private int CedulaUsuario => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         // Iniciar una conversación
         [HttpPost("IniciarConversacion")]
-        public async Task<IActionResult> IniciarConversacion(
-            [FromBody] IniciarConversacionRequest solicitud)
+        public async Task<IActionResult> IniciarConversacion()
         {
-            if (solicitud == null || solicitud.CedulaUsuario <= 0)
-            {
-                return BadRequest(new
-                {
-                    mensaje = "Debes proporcionar una cédula válida."
-                });
-            }
-
             try
             {
                 var conversacion = await _chatbotBC.CrearConversacion(
-                    solicitud.CedulaUsuario);
+                    CedulaUsuario);
 
                 return Ok(new
                 {
                     mensaje = "Conversación iniciada correctamente.",
                     idConversacion = conversacion.IdConversacion,
-                    cedulaUsuario = conversacion.CedulaUsuario,
                     fechaInicio = conversacion.FechaInicio
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //  TEMPORAL: Eliminar el detalle interno al terminar las pruebas
                 return StatusCode(500, new
                 {
-                    mensaje = ex.Message,
-                    detalle = ex.InnerException?.Message
+                    mensaje = "No se pudo completar la operación."
                 });
             }
         }
@@ -100,13 +55,12 @@ namespace Proyecto.Controllers
             [FromBody] EnviarMensajeChatbotRequest solicitud)
         {
             if (solicitud == null ||
-                solicitud.CedulaUsuario <= 0 ||
                 solicitud.IdConversacion <= 0 ||
                 string.IsNullOrWhiteSpace(solicitud.Mensaje))
             {
                 return BadRequest(new
                 {
-                    mensaje = "Debes proporcionar una cédula, una conversación y un mensaje válido."
+                    mensaje = "Debes proporcionar una conversación y un mensaje válidos."
                 });
             }
 
@@ -114,7 +68,7 @@ namespace Proyecto.Controllers
             {
                 string respuesta = await _chatbotBC.ProcesarMensaje(
                     solicitud.IdConversacion,
-                    solicitud.CedulaUsuario,
+                    CedulaUsuario,
                     solicitud.Mensaje);
 
                 return Ok(new
@@ -126,23 +80,22 @@ namespace Proyecto.Controllers
             {
                 return BadRequest(new { mensaje = ex.Message });
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                return StatusCode(502, new { mensaje = ex.Message });
+                return StatusCode(502, new { mensaje = "El servicio de conversación no está disponible." });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { mensaje = ex.Message });
+                return StatusCode(500, new { mensaje = "No se pudo completar la operación." });
             }
         }
 
         // Obtener mensajes de una conversación
-        [HttpGet("ObtenerMensajes/{idConversacion}/{cedulaUsuario}")]
+        [HttpGet("ObtenerMensajes/{idConversacion}")]
         public async Task<IActionResult> ObtenerMensajes(
-            int idConversacion,
-            int cedulaUsuario)
+            int idConversacion)
         {
-            if (idConversacion <= 0 || cedulaUsuario <= 0)
+            if (idConversacion <= 0)
             {
                 return BadRequest(new
                 {
@@ -154,7 +107,7 @@ namespace Proyecto.Controllers
             {
                 var conversacion = await _chatbotBC.ObtenerConversacionConMensajes(
                     idConversacion,
-                    cedulaUsuario);
+                    CedulaUsuario);
 
                 if (conversacion == null)
                 {
@@ -183,9 +136,9 @@ namespace Proyecto.Controllers
                     mensajes = mensajes
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { mensaje = ex.Message });
+                return StatusCode(500, new { mensaje = "No se pudo completar la operación." });
             }
 
         }
@@ -193,21 +146,13 @@ namespace Proyecto.Controllers
 
 
         // Obtener conversaciones con el primer mensaje para generar el título
-        [HttpGet("ObtenerConversaciones/{cedulaUsuario}")]
-        public async Task<IActionResult> ObtenerConversaciones(int cedulaUsuario)
+        [HttpGet("ObtenerConversaciones")]
+        public async Task<IActionResult> ObtenerConversaciones()
         {
-            if (cedulaUsuario <= 0)
-            {
-                return BadRequest(new
-                {
-                    mensaje = "Debes proporcionar una cédula válida."
-                });
-            }
-
             try
             {
                 var conversaciones = await _chatbotBC.ObtenerConversacionesUsuario(
-                    cedulaUsuario);
+                    CedulaUsuario);
 
                 var resultado = conversaciones.Select(c =>
                 {
@@ -235,19 +180,18 @@ namespace Proyecto.Controllers
 
                 return Ok(resultado);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { mensaje = ex.Message });
+                return StatusCode(500, new { mensaje = "No se pudo completar la operación." });
             }
         }
 
         // Eliminar una conversación
-        [HttpDelete("EliminarConversacion/{idConversacion}/{cedulaUsuario}")]
+        [HttpDelete("EliminarConversacion/{idConversacion}")]
         public async Task<IActionResult> EliminarConversacion(
-            int idConversacion,
-            int cedulaUsuario)
+            int idConversacion)
         {
-            if (idConversacion <= 0 || cedulaUsuario <= 0)
+            if (idConversacion <= 0)
             {
                 return BadRequest(new
                 {
@@ -259,7 +203,7 @@ namespace Proyecto.Controllers
             {
                 bool eliminada = await _chatbotBC.EliminarConversacion(
                     idConversacion,
-                    cedulaUsuario);
+                    CedulaUsuario);
 
                 if (!eliminada)
                 {
@@ -274,33 +218,20 @@ namespace Proyecto.Controllers
                     mensaje = "Conversación eliminada correctamente."
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new
                 {
-                    mensaje = ex.Message
+                    mensaje = "No se pudo completar la operación."
                 });
             }
         }
 
 
-        public class MensajeChatbotRequest
-        {
-            public string Mensaje { get; set; } = string.Empty;
-        }
-
-        public class IniciarConversacionRequest
-        {
-            public int CedulaUsuario { get; set; }
-        }
-
         public class EnviarMensajeChatbotRequest
         {
-            public int CedulaUsuario { get; set; }
             public int IdConversacion { get; set; }
             public string Mensaje { get; set; } = string.Empty;
         }
     }
 }
-//Agregue esto para probar la IA cuando unamos los modulos hay que conectarlo a el inicio de sesion 
-

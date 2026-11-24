@@ -20,4 +20,6 @@ public partial class Conversacionchatbot
     public virtual Estadoactivo IdEstadoActivoNavigation { get; set; } = null!;
 
     public virtual ICollection<Mensajechatbot> Mensajechatbots { get; set; } = new List<Mensajechatbot>();
+
+    public bool OcultaUsuario { get; set; }
 }

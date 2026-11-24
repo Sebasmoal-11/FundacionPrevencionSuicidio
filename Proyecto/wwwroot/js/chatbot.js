@@ -1,6 +1,18 @@
-﻿
+
 //  TEMPORAL: reemplazar por la cédula del usuario autenticado.
-const cedulaUsuario = 999999999;
+const tokenCsrf = document.querySelector("#chatbot-antiforgery input").value;
+
+async function solicitarChat(url, opciones = {}) {
+    const respuesta = await fetch(url, {
+        ...opciones,
+        headers: { ...opciones.headers, "X-CSRF-TOKEN": tokenCsrf }
+    });
+    if (respuesta.status === 401) {
+        window.location.assign("/ingreso");
+        throw new Error("Tu sesión venció.");
+    }
+    return respuesta;
+}
 
 let idConversacionActual = null;
 
@@ -46,8 +58,8 @@ function formatearFecha(fecha) {
 
 async function cargarConversaciones() {
     try {
-        const respuesta = await fetch(
-            `/Chatbot/ObtenerConversaciones/${cedulaUsuario}`
+        const respuesta = await solicitarChat(
+            "/Chatbot/ObtenerConversaciones"
         );
 
         if (!respuesta.ok) {
@@ -139,8 +151,8 @@ function agregarConversacionLista(conversacion) {
 
 async function seleccionarConversacion(idConversacion) {
     try {
-        const respuesta = await fetch(
-            `/Chatbot/ObtenerMensajes/${idConversacion}/${cedulaUsuario}`
+        const respuesta = await solicitarChat(
+            `/Chatbot/ObtenerMensajes/${idConversacion}`
         );
 
         if (!respuesta.ok) {
@@ -194,14 +206,8 @@ async function crearConversacion() {
     try {
         btnNuevaConversacion.disabled = true;
 
-        const respuesta = await fetch("/Chatbot/IniciarConversacion", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                cedulaUsuario: cedulaUsuario
-            })
+        const respuesta = await solicitarChat("/Chatbot/IniciarConversacion", {
+            method: "POST"
         });
 
         const datos = await respuesta.json();
@@ -244,14 +250,8 @@ async function enviarMensaje() {
 
         // Crear conversación si todavía no existe.
         if (!idConversacionActual) {
-            const respuestaNueva = await fetch("/Chatbot/IniciarConversacion", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    cedulaUsuario: cedulaUsuario
-                })
+            const respuestaNueva = await solicitarChat("/Chatbot/IniciarConversacion", {
+                method: "POST"
             });
 
             const nuevaConversacion = await respuestaNueva.json();
@@ -271,13 +271,12 @@ async function enviarMensaje() {
 
         indicador = mostrarIndicadorEscritura();
 
-        const respuesta = await fetch("/Chatbot/EnviarMensaje", {
+        const respuesta = await solicitarChat("/Chatbot/EnviarMensaje", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                cedulaUsuario: cedulaUsuario,
                 idConversacion: idConversacionActual,
                 mensaje: mensaje
             })
@@ -407,8 +406,8 @@ async function eliminarConversacion(idConversacion) {
     }
 
     try {
-        const respuesta = await fetch(
-            `/Chatbot/EliminarConversacion/${idConversacion}/${cedulaUsuario}`,
+        const respuesta = await solicitarChat(
+            `/Chatbot/EliminarConversacion/${idConversacion}`,
             {
                 method: "DELETE"
             }

@@ -90,10 +90,9 @@ public partial class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.IdAnalisis, "IX_alerta_id_analisis");
 
             entity.HasIndex(e => e.IdEstadoAlerta, "IX_alerta_id_estado_alerta");
-
             entity.Property(e => e.IdAlerta)
-                .ValueGeneratedNever()
-                .HasColumnName("id_alerta");
+                .HasColumnName("id_alerta")
+                .HasDefaultValueSql("(NEXT VALUE FOR dbo.Seq_Alerta)");
             entity.Property(e => e.FechaGeneracion)
                 .HasPrecision(0)
                 .HasColumnName("fecha_generacion");
@@ -287,6 +286,9 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Conversacionchatbot>(entity =>
         {
+                    entity.Property(e => e.OcultaUsuario)
+            .HasColumnName("oculta_usuario")
+            .HasDefaultValue(false);
             entity.HasKey(e => e.IdConversacion);
 
             entity.ToTable("conversacionchatbot");
@@ -764,10 +766,9 @@ public partial class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.IdMensaje, "IX_resultadoanalisis_id_mensaje");
 
             entity.HasIndex(e => e.IdNivelRiesgo, "IX_resultadoanalisis_id_nivel_riesgo");
-
             entity.Property(e => e.IdAnalisis)
-                .ValueGeneratedNever()
-                .HasColumnName("id_analisis");
+    .HasColumnName("id_analisis")
+    .HasDefaultValueSql("(NEXT VALUE FOR dbo.Seq_ResultadoAnalisis)");
             entity.Property(e => e.FechaAnalisis)
                 .HasPrecision(0)
                 .HasColumnName("fecha_analisis");

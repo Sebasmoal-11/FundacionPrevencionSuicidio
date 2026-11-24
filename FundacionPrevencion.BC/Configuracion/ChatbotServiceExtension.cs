@@ -14,7 +14,10 @@ namespace FundacionPrevencion.BC.Configuracion
             services.AddScoped<ChatbotDA>();
             services.AddScoped<ChatbotBW>();
             services.AddScoped<ChatbotBC>();
+
             services.AddHttpClient<GeminiService>();
+
+            services.AddScoped<AnalisisRiesgoService>();
 
             return services;
         }

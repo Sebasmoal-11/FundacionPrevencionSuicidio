@@ -1,0 +1,36 @@
+@using Proyecto.Autenticacion
+@{
+    var autenticado = User.Identity?.IsAuthenticated == true;
+    var empleado = User.IsInRole(Cuentas.Personal);
+    var cuenta = empleado ? "Personal" : "Cuenta";
+    var controlador = ViewContext.RouteData.Values["controller"] as string;
+    var accion = ViewContext.RouteData.Values["action"] as string;
+}
+<header class="navegacion-fundacion">
+    <a class="marca" asp-controller="Acceso" asp-action="Ingreso" aria-label="Inicio de la Fundación para la Prevención del Suicidio">
+        <span class="marca-simbolo" aria-hidden="true"></span>
+        Fundación para la Prevención del Suicidio
+    </a>
+    <nav aria-label="Navegación principal">
+        @if (autenticado)
+        {
+            <a asp-controller="Acceso" asp-action="@cuenta"
+               aria-current="@(controlador == "Acceso" && accion == cuenta ? "page" : null)">@(empleado ? "Área del personal" : "Mi cuenta")</a>
+            @if (!empleado)
+            {
+                <a asp-controller="ChatbotWeb" asp-action="Index"
+                   aria-current="@(controlador == "ChatbotWeb" ? "page" : null)">Chatbot</a>
+            }
+        }
+        else
+        {
+            <a asp-controller="Acceso" asp-action="Ingreso">Inicio</a>
+        }
+        @if (autenticado)
+        {
+            <form asp-controller="Acceso" asp-action="Salir" method="post">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        }
+    </nav>
+</header>

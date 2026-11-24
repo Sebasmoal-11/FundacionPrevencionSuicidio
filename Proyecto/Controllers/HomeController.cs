@@ -25,28 +25,6 @@ namespace Proyecto.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        // Método temporal para comprobar la conexión con SQL Server.
-        public async Task<IActionResult> ProbarConexion()
-        {
-            bool conectado = await _context.Database.CanConnectAsync();
-
-            return Content(conectado
-                ? "Conexión exitosa con la base de datos."
-                : "No se pudo conectar con la base de datos.");
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-            });
-        }
+     
     }
 }

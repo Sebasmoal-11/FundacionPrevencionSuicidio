@@ -1,0 +1,24 @@
+@using System.Security.Claims
+@using Proyecto.Autenticacion
+@{
+    Layout = "_Layout";
+    bool empleado = User.IsInRole(Cuentas.Personal);
+}
+<h1>@ViewData["Title"]</h1>
+<p>Hola, @User.Identity?.Name.</p>
+<dl>
+    <dt>Tipo de cuenta</dt>
+    <dd>@(empleado ? "Personal de la fundación" : "Usuario")</dd>
+    @if (empleado)
+    {
+        <dt>Roles</dt>
+        <dd>@string.Join(", ", User.FindAll(ClaimTypes.Role).Select(r => r.Value))</dd>
+    }
+</dl>
+@if (!empleado)
+{
+    <a class="chatbot-flotante" asp-controller="ChatbotWeb" asp-action="Index">
+        <span class="chatbot-flotante-icono" aria-hidden="true"></span>
+        Abrir chatbot
+    </a>
+}

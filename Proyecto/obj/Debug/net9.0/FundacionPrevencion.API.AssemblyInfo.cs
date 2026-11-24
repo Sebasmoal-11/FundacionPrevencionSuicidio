@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FundacionPrevencion.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55665f1a296b77284a6b90e272735be469842023")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32282140d7e8936df027b5050a46092d5c02019f")]
 [assembly: System.Reflection.AssemblyProductAttribute("FundacionPrevencion.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FundacionPrevencion.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

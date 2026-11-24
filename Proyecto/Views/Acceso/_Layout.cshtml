@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] | Fundación</title>
+    <link rel="stylesheet" href="~/css/acceso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navegacion.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_Navegacion" />
+    <div class="acceso">
+        <div class="arte" aria-hidden="true"><span></span></div>
+        <main>
+            @if (TempData["Mensaje"] is string mensaje)
+            {
+                <p class="mensaje" role="status">@mensaje</p>
+            }
+            @RenderBody()
+        </main>
+    </div>
+</body>
+</html>

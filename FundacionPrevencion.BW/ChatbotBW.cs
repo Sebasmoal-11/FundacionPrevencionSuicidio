@@ -1,7 +1,8 @@
 ﻿
+using FundacionPrevencion.BW.Modelos;
+using FundacionPrevencion.BW.Servicios;
 using FundacionPrevencion.DA;
 using Proyecto.Models;
-using FundacionPrevencion.BW.Servicios;
 
 namespace FundacionPrevencion.BW
 {
@@ -9,14 +10,16 @@ namespace FundacionPrevencion.BW
     {
         private readonly ChatbotDA _chatbotDA;
         private readonly GeminiService _geminiService;
+        private readonly AnalisisRiesgoService _analisisRiesgoService;
         public ChatbotBW(
-     ChatbotDA chatbotDA,
-     GeminiService geminiService)
+        ChatbotDA chatbotDA,
+        GeminiService geminiService,
+        AnalisisRiesgoService analisisRiesgoService)
         {
             _chatbotDA = chatbotDA;
             _geminiService = geminiService;
+            _analisisRiesgoService = analisisRiesgoService;
         }
-
         // Consultar las conversaciones de un usuario
         public async Task<List<Conversacionchatbot>> ObtenerConversacionesUsuario(
             int cedulaUsuario)
@@ -102,10 +105,36 @@ namespace FundacionPrevencion.BW
                 idConversacion,
                 cedulaUsuario);
         }
+
+        // Analizar y guardar el riesgo de un mensaje
+        public async Task<AnalisisRiesgoResultado> AnalizarYGuardarRiesgo(
+            int idMensaje,
+            string mensaje)
+        {
+            var analisis = await _analisisRiesgoService.AnalizarMensaje(mensaje);
+
+            var resultadoGuardado = await _chatbotDA.GuardarResultadoAnalisis(
+                idMensaje,
+                analisis.IdNivelRiesgo,
+                analisis.Resultado);
+
+            // Generar alerta para niveles moderado o alto
+            if (analisis.IdNivelRiesgo >= 2)
+            {
+                await _chatbotDA.CrearAlerta(
+                    resultadoGuardado.IdAnalisis,
+                    analisis.Resultado);
+            }
+
+            return analisis;
+        }
+
+
+
         public async Task<string> ProcesarMensaje(
-    int idConversacion,
-    int cedulaUsuario,
-    string mensaje)
+            int idConversacion,
+            int cedulaUsuario,
+            string mensaje)
         {
             if (string.IsNullOrWhiteSpace(mensaje))
                 throw new ArgumentException("El mensaje no puede estar vacío.");
@@ -119,17 +148,24 @@ namespace FundacionPrevencion.BW
                     "La conversación no existe o no pertenece al usuario.");
 
             // Guardar el mensaje enviado por el usuario
-            await _chatbotDA.GuardarMensaje(idConversacion, 1, mensaje);
+            var mensajeGuardado = await _chatbotDA.GuardarMensaje(
+                idConversacion, 1, mensaje);
 
-            // Recuperar todos los mensajes de la conversación
+            // Analizar el riesgo y guardar el resultado
+            await AnalizarYGuardarRiesgo(
+                mensajeGuardado.IdMensaje,
+                mensaje);
+
+            // Recuperar el historial actualizado
             var historial = await _chatbotDA.ObtenerMensajesConversacion(
                 idConversacion, cedulaUsuario);
 
-            // Enviar el historial completo a Gemini
+            // Gemini genera la respuesta con las instrucciones de seguridad
             string respuesta = await _geminiService.EnviarMensaje(historial);
 
-            // Guardar la respuesta generada por el chatbot
-            await _chatbotDA.GuardarMensaje(idConversacion, 2, respuesta);
+            // Guardar la respuesta original de Gemini, sin agregar texto duplicado
+            await _chatbotDA.GuardarMensaje(
+                idConversacion, 2, respuesta);
 
             // Actualizar la última actividad
             await _chatbotDA.ActualizarFechaActividad(
@@ -137,6 +173,9 @@ namespace FundacionPrevencion.BW
 
             return respuesta;
         }
+
+
+
 
         // Eliminar una conversación
         public async Task<bool> EliminarConversacion(
