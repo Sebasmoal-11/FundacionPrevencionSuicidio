@@ -1,0 +1,148 @@
+# ============================================================
+# .NET / Visual Studio / Rider / VS Code
+# ============================================================
+
+# Carpetas de compilación (cubren todos los proyectos de la solución)
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.DotSettings.user
+*.VC.db
+*.VC.VC.opendb
+*.sdf
+*.opensdf
+*.cache
+*.tlog
+*.ipch
+ipch/
+
+# Rider / ReSharper
+.idea/
+_ReSharper*/
+*.ReSharper
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# Resultados de compilación y depuración
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.lib
+*.exp
+*.ilk
+*.obj
+*.o
+*.lo
+*.slo
+*.idb
+*.class
+*.cache
+*.pid
+*.log
+
+# Resultados de pruebas y cobertura
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+coverage.*
+TestResults/
+
+# Publicación y paquetes
+publish/
+[Pp]ublish/
+*.pubxml
+*.publishproj
+*.nupkg
+*.snupkg
+packages/
+artifacts/
+
+# ============================================================
+# Configuración local y secretos
+# ============================================================
+
+# Archivos de configuración estrictamente locales
+appsettings.*.local.json
+secrets.json
+*.secrets.json
+*.secret.json
+.env
+.env.*
+!.env.example
+
+# Certificados y llaves privadas
+*.pfx
+*.p12
+*.snk
+*.key
+*.pem
+
+# ============================================================
+# Bases de datos locales / respaldos
+# ============================================================
+
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.trn
+*.sqlite
+*.sqlite3
+*.db
+
+# ============================================================
+# Sistema operativo
+# ============================================================
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# ============================================================
+# Editores / archivos temporales
+# ============================================================
+
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+*.orig
+*.rej
+
+# ============================================================
+# Node / Python (por si se agregan herramientas auxiliares)
+# ============================================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
