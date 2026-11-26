@@ -1,0 +1,111 @@
+@model Proyecto.ViewModels.AlertaListaViewModel
+@using Proyecto.ViewModels
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Alertas";
+
+    string ClaseEstado(string nombre) => nombre switch
+    {
+        "Pendiente de revisión" => "text-bg-warning",
+        "En revisión" => "text-bg-info",
+        "Cerrada" => "text-bg-success",
+        _ => "text-bg-secondary"
+    };
+}
+<h1>Alertas</h1>
+<p class="text-muted">
+    Alertas generadas por el análisis del chatbot. Solo el personal autenticado
+    puede consultarlas y revisarlas.
+</p>
+
+<partial name="_Mensajes" />
+
+<form method="get" asp-action="Index" class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label class="form-label" for="estado">Estado</label>
+        <select id="estado" name="estado" class="form-select">
+            <option value="">Todos</option>
+            @foreach (var estado in Model.Estados)
+            {
+                <option value="@estado.IdEstadoAlerta"
+                        selected="@(Model.EstadoSeleccionado == estado.IdEstadoAlerta ? "selected" : null)">
+                    @estado.Nombre
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label" for="cedula">Cédula del usuario</label>
+        <input id="cedula" name="cedula" value="@Model.Cedula"
+               class="form-control" inputmode="numeric" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
+    </div>
+</form>
+
+<p class="mb-2">@Model.Total alerta(s) encontrada(s).</p>
+
+@if (Model.Alertas.Count == 0)
+{
+    <div class="alert alert-info" role="status">
+        No hay alertas que coincidan con el filtro.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Generada</th>
+                    <th scope="col">Nivel de riesgo</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col"><span class="visually-hidden">Acciones</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var alerta in Model.Alertas)
+                {
+                    <tr>
+                        <td>@alerta.IdAlerta</td>
+                        <td>@alerta.FechaGeneracion.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@alerta.NivelRiesgo</td>
+                        <td>@alerta.Usuario (@alerta.CedulaUsuario)</td>
+                        <td><span class="badge @ClaseEstado(alerta.Estado)">@alerta.Estado</span></td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary"
+                               asp-action="Detalle" asp-route-id="@alerta.IdAlerta">Ver detalle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación de alertas">
+            <ul class="pagination">
+                <li class="page-item @(Model.Pagina <= 1 ? "disabled" : null)">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-estado="@Model.EstadoSeleccionado"
+                       asp-route-cedula="@Model.Cedula"
+                       asp-route-pagina="@(Model.Pagina - 1)">Anterior</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Página @Model.Pagina de @Model.TotalPaginas</span>
+                </li>
+                <li class="page-item @(Model.Pagina >= Model.TotalPaginas ? "disabled" : null)">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-estado="@Model.EstadoSeleccionado"
+                       asp-route-cedula="@Model.Cedula"
+                       asp-route-pagina="@(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}

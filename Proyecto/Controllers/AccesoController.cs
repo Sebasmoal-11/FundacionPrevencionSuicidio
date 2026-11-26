@@ -61,7 +61,7 @@ public sealed class AccesoController(Cuentas cuentas) : Controller
     public IActionResult Personal()
     {
         ViewData["Title"] = "Área del personal";
-        return View("Cuenta");
+        return View("Panel");
     }
 
     [Authorize, HttpPost("/salir")]

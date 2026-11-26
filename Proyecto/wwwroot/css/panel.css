@@ -1,0 +1,265 @@
+/* Panel principal del personal.
+   Reutiliza la paleta del acceso (acceso.css) sin depender de ese archivo. */
+
+.panel {
+  --tinta: #26243c;
+  --superficie: #fffdf8;
+  --acento: #4f3765;
+  --acento-suave: #f0e4ef;
+  --borde: #ded5ca;
+  --tenue: #655c6d;
+
+  display: grid;
+  grid-template-columns: minmax(13.5rem, 16rem) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  padding: clamp(1.2rem, 4vw, 2.4rem) 0 2.5rem;
+  color: var(--tinta);
+  font-family: system-ui, sans-serif;
+}
+
+/* ---------- Barra lateral ---------- */
+
+.panel-lateral {
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.15rem;
+  border: 1px solid var(--borde);
+  border-radius: 1.15rem;
+  background: var(--superficie);
+  box-shadow: 0 .35rem 1.2rem rgb(38 36 60 / 6%);
+}
+
+.panel-lateral-marca {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+
+.panel-marca-simbolo {
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50% 50% 45% 12%;
+  background: linear-gradient(140deg, #ae86a4 48%, #4f3765 49%);
+}
+
+.panel-lateral-marca strong {
+  display: block;
+  font-size: .95rem;
+  line-height: 1.15;
+}
+
+.panel-lateral-marca small {
+  display: block;
+  color: var(--tenue);
+  font-size: .75rem;
+  line-height: 1.25;
+}
+
+.panel-menu {
+  display: grid;
+  gap: .15rem;
+  margin: 0;
+}
+
+.panel-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .55rem .65rem;
+  border-radius: .6rem;
+  color: var(--acento);
+  font-size: .9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.panel-menu-item:hover {
+  background: var(--acento-suave);
+}
+
+.panel-menu-item.activo {
+  background: var(--acento);
+  color: #fff;
+}
+
+.panel-menu-item.deshabilitado {
+  color: var(--tenue);
+  font-weight: 500;
+  cursor: default;
+}
+
+.panel-menu-item.deshabilitado:hover {
+  background: transparent;
+}
+
+.panel-menu-item small {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+
+.panel-lateral-nota {
+  margin: 0;
+  color: var(--tenue);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+/* ---------- Contenido ---------- */
+
+.panel-contenido {
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+}
+
+.panel-bienvenida {
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: 1px solid var(--borde);
+  border-radius: 1.15rem;
+  background: radial-gradient(ellipse at 0% 0%, #f3e7f0, #fffdf8 62%);
+}
+
+.panel-saludo {
+  margin: 0 0 .35rem;
+  color: var(--acento);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.panel-bienvenida h1 {
+  margin: 0 0 .5rem;
+  font-family: Georgia, serif;
+  font-size: clamp(1.65rem, 3.6vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+
+.panel-bienvenida p {
+  margin: 0;
+  max-width: 46rem;
+  color: var(--tenue);
+}
+
+.panel-seccion-titulo {
+  margin: 0;
+  color: var(--tenue);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.panel-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14.5rem, 1fr));
+  gap: 1rem;
+}
+
+.panel-tarjeta {
+  display: grid;
+  align-content: start;
+  gap: .5rem;
+  padding: 1.15rem;
+  border: 1px solid var(--borde);
+  border-radius: 1rem;
+  background: var(--superficie);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 .3rem 1rem rgb(38 36 60 / 5%);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+a.panel-tarjeta:hover,
+a.panel-tarjeta:focus-visible {
+  transform: translateY(-2px);
+  border-color: #b79fbd;
+  box-shadow: 0 .7rem 1.6rem rgb(79 55 101 / 14%);
+}
+
+.panel-tarjeta-icono {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: .75rem;
+  background: var(--acento-suave);
+  color: var(--acento);
+}
+
+.panel-tarjeta-icono svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.panel-tarjeta-titulo {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.panel-tarjeta-texto {
+  margin: 0;
+  color: var(--tenue);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+
+.panel-etiqueta {
+  justify-self: start;
+  margin-top: .15rem;
+  padding: .15rem .55rem;
+  border-radius: 1rem;
+  background: var(--acento-suave);
+  color: var(--acento);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.panel-tarjeta--pendiente {
+  box-shadow: none;
+}
+
+.panel-tarjeta--pendiente .panel-tarjeta-icono {
+  background: #f1ece4;
+  color: #8a7f74;
+}
+
+.panel-etiqueta--pendiente {
+  background: #f1ece4;
+  color: #7d7268;
+}
+
+/* ---------- Adaptación a pantallas pequeñas ---------- */
+
+@media (max-width: 900px) {
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel-lateral {
+    position: static;
+  }
+
+  .panel-menu {
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-menu {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

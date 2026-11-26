@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--crear-emp
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddChatbotServices();
+builder.Services.AddAlertaServices();
 builder.Services.AddScoped<Cuentas>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.AddRateLimiter(options =>
@@ -54,7 +55,7 @@ builder.Services.AddAuthentication("Cookies").AddCookie(options =>
     {
         if (context.Request.Path.StartsWithSegments("/Chatbot"))
             context.Response.StatusCode = 401;
-        else if (context.Request.Path == "/personal")
+        else if (context.Request.Path.StartsWithSegments("/personal"))
             context.Response.Redirect("/personal/ingreso");
         else
             context.Response.Redirect(context.RedirectUri);

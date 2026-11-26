@@ -16,6 +16,11 @@
         {
             <a asp-controller="Acceso" asp-action="@cuenta"
                aria-current="@(controlador == "Acceso" && accion == cuenta ? "page" : null)">@(empleado ? "Área del personal" : "Mi cuenta")</a>
+            @if (empleado)
+            {
+                <a asp-controller="Alertas" asp-action="Index"
+                   aria-current="@(controlador == "Alertas" ? "page" : null)">Alertas</a>
+            }
             @if (!empleado)
             {
                 <a asp-controller="ChatbotWeb" asp-action="Index"
