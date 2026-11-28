@@ -13,6 +13,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Alertum> Alerta { get; set; }
 
+    public virtual DbSet<Alertacaso> Alertacasos { get; set; }
+
     public virtual DbSet<Asignacioncaso> Asignacioncasos { get; set; }
 
     public virtual DbSet<Auditoriaacceso> Auditoriaaccesos { get; set; }
@@ -109,6 +111,33 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdEstadoAlerta)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("alerta_ibfk_2");
+        });
+
+        modelBuilder.Entity<Alertacaso>(entity =>
+        {
+            entity.HasKey(e => e.IdAlertaCaso);
+
+            entity.ToTable("alertacaso");
+
+            entity.HasIndex(e => e.IdAlerta, "UQ_alertacaso_id_alerta").IsUnique();
+
+            entity.HasIndex(e => e.IdCaso, "IX_alertacaso_id_caso");
+
+            entity.Property(e => e.IdAlertaCaso)
+                .ValueGeneratedNever()
+                .HasColumnName("id_alerta_caso");
+            entity.Property(e => e.IdAlerta).HasColumnName("id_alerta");
+            entity.Property(e => e.IdCaso).HasColumnName("id_caso");
+
+            entity.HasOne(d => d.IdAlertaNavigation).WithMany()
+                .HasForeignKey(d => d.IdAlerta)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("alertacaso_ibfk_1");
+
+            entity.HasOne(d => d.IdCasoNavigation).WithMany()
+                .HasForeignKey(d => d.IdCaso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("alertacaso_ibfk_2");
         });
 
         modelBuilder.Entity<Asignacioncaso>(entity =>

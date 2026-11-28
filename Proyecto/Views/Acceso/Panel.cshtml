@@ -24,9 +24,9 @@
 
             <a class="panel-menu-item" asp-controller="Alertas" asp-action="Index">Alertas</a>
 
-            <span class="panel-menu-item deshabilitado">
-                Gestión de casos <small>Pronto</small>
-            </span>
+            <a class="panel-menu-item" asp-controller="Personal" asp-action="GestionCasos">
+                Gestión de casos
+            </a>
             <span class="panel-menu-item deshabilitado">
                 Factores de riesgo <small>Pronto</small>
             </span>
@@ -78,7 +78,7 @@
                 <span class="panel-etiqueta">Disponible</span>
             </a>
 
-            <div class="panel-tarjeta panel-tarjeta--pendiente">
+            <a class="panel-tarjeta" asp-controller="Personal" asp-action="GestionCasos">
                 <span class="panel-tarjeta-icono" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -89,8 +89,8 @@
                 <span class="panel-tarjeta-texto">
                     Administre los casos abiertos y su seguimiento.
                 </span>
-                <span class="panel-etiqueta panel-etiqueta--pendiente">Próximamente</span>
-            </div>
+                <span class="panel-etiqueta">Disponible</span>
+            </a>
 
             <div class="panel-tarjeta panel-tarjeta--pendiente">
                 <span class="panel-tarjeta-icono" aria-hidden="true">

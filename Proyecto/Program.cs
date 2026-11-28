@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--crear-emp
 builder.Services.AddControllersWithViews();
 builder.Services.AddChatbotServices();
 builder.Services.AddAlertaServices();
+builder.Services.AddCasoServices();
 builder.Services.AddScoped<Cuentas>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.AddRateLimiter(options =>

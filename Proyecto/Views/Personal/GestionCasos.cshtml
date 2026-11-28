@@ -1,0 +1,962 @@
+
+@model Proyecto.ViewModels.GestionCasosViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestión de casos";
+
+    string[] indicadores =
+        { "indicador-amarillo", "indicador-verde", "indicador-gris", "indicador-morado" };
+    int indiceIndicador = 0;
+
+    string EtiquetaEstado(string nombre) => nombre switch
+    {
+        "Abierto" => "Abiertos",
+        "En seguimiento" => "En seguimiento",
+        "Cerrado" => "Cerrados",
+        _ => nombre
+    };
+
+    string DescripcionEstado(string nombre, string descripcion) => nombre switch
+    {
+        "Abierto" => "Pendientes de atención",
+        "En seguimiento" => "Casos en proceso de atención",
+        "Cerrado" => "Casos finalizados",
+        _ => descripcion
+    };
+
+    bool hayAlertas = Model.AlertasDisponibles.Count > 0;
+    string? origenGuardado = TempData["OrigenNuevoCaso"] as string;
+    string origenInicial = origenGuardado is "alerta" or "manual"
+        ? origenGuardado
+        : (hayAlertas ? "alerta" : "manual");
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/gestion-casos.css" asp-append-version="true" />
+}
+
+<div class="gestion-casos">
+
+    <!-- Barra lateral -->
+    <aside class="casos-sidebar">
+        <div class="casos-marca">
+            <span class="casos-logo" aria-hidden="true"></span>
+            <div>
+                <strong>Fundación</strong>
+                <small>Prevención del Suicidio</small>
+            </div>
+        </div>
+
+        <nav class="casos-menu" aria-label="Módulos del sistema">
+
+            <span class="menu-titulo">Operación</span>
+
+            <a class="menu-item"
+               asp-controller="Acceso"
+               asp-action="Personal">
+                <span>Panel principal</span>
+            </a>
+
+            <a class="menu-item"
+               asp-controller="Alertas"
+               asp-action="Index">
+                <span>Alertas</span>
+            </a>
+
+            <a class="menu-item activo" href="#" aria-current="page">
+                <span>Gestión de casos</span>
+            </a>
+
+            <span class="menu-item deshabilitado">
+                Seguimientos
+                <small>Pronto</small>
+            </span>
+
+            <span class="menu-item deshabilitado">
+                Solicitudes
+                <small>Pronto</small>
+            </span>
+
+            <span class="menu-item deshabilitado">
+                Comunicación
+                <small>Pronto</small>
+            </span>
+
+            <span class="menu-item deshabilitado">
+                Estadísticas
+                <small>Pronto</small>
+            </span>
+
+        </nav>
+
+        <div class="casos-sidebar-nota">
+            Plataforma de atención y seguimiento del personal de la Fundación.
+        </div>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="casos-contenido">
+
+        <a class="casos-volver"
+           asp-controller="Alertas"
+           asp-action="Index">
+            <span aria-hidden="true">←</span>
+            Volver a Alertas
+        </a>
+
+        <!-- Encabezado -->
+        <header class="casos-encabezado">
+
+            <div>
+                <p class="casos-eyebrow">Atención y seguimiento</p>
+
+                <h1>Gestión de casos</h1>
+
+                <p class="casos-descripcion">
+                    Consulte los casos asignados, revise su información
+                    y gestione su seguimiento.
+                </p>
+            </div>
+
+            <div class="casos-acciones-principales">
+
+                <button type="button"
+                        class="casos-btn casos-btn-principal"
+                        data-modal-open="modal-nuevo">
+                    <span aria-hidden="true">+</span>
+                    Registrar nuevo caso
+                </button>
+
+                <button type="button"
+                        class="casos-btn casos-btn-secundario"
+                        data-modal-open="modal-nuevo"
+                        data-origen-inicial="alerta">
+                    Crear desde una alerta
+                </button>
+
+            </div>
+
+        </header>
+
+        @if (TempData["Mensaje"] is string mensajeExito)
+        {
+            <div class="casos-aviso casos-aviso-exito" role="status">
+                @mensajeExito
+            </div>
+        }
+
+        @if (TempData["Error"] is string mensajeError)
+        {
+            <div class="casos-aviso casos-aviso-error" role="alert">
+                @mensajeError
+            </div>
+        }
+
+        <!-- Indicadores -->
+        <section class="casos-resumen">
+
+            <article class="resumen-card">
+                <span class="resumen-indicador indicador-morado"></span>
+                <div>
+                    <strong class="resumen-numero">@Model.TotalGeneral</strong>
+                    <span class="resumen-titulo">Casos asignados</span>
+                    <small>Casos bajo su responsabilidad</small>
+                </div>
+            </article>
+
+            @foreach (var estado in Model.Estados)
+            {
+                <article class="resumen-card">
+                    <span class="resumen-indicador @indicadores[indiceIndicador % indicadores.Length]"></span>
+                    <div>
+                        <strong class="resumen-numero">@estado.Total</strong>
+                        <span class="resumen-titulo">@EtiquetaEstado(estado.Nombre)</span>
+                        <small>@DescripcionEstado(estado.Nombre, estado.Descripcion)</small>
+                    </div>
+                </article>
+
+                indiceIndicador++;
+            }
+
+        </section>
+
+        <!-- Filtros -->
+        <section class="casos-filtros">
+
+            <form method="get"
+                  asp-controller="Personal"
+                  asp-action="GestionCasos"
+                  id="filtrosCasos">
+
+                <div class="filtros-estados">
+                    <span class="filtros-label">Estado</span>
+
+                    <button type="submit" name="estado" value="0"
+                            class="filtro-chip @(Model.EstadoSeleccionado is null ? "activo" : null)">
+                        Todos <b>@Model.TotalGeneral</b>
+                    </button>
+
+                    @foreach (var estado in Model.Estados)
+                    {
+                        <button type="submit" name="estado" value="@estado.IdEstadoCaso"
+                                class="filtro-chip @(Model.EstadoSeleccionado == estado.IdEstadoCaso ? "activo" : null)">
+                            @EtiquetaEstado(estado.Nombre) <b>@estado.Total</b>
+                        </button>
+                    }
+                </div>
+
+                <div class="filtros-formulario">
+
+                    <div class="casos-campo casos-busqueda">
+                        <label for="buscarCedula">Cédula del usuario</label>
+
+                        <input type="text"
+                               id="buscarCedula"
+                               name="cedulaUsuario"
+                               value="@Model.CedulaUsuario"
+                               class="casos-input"
+                               inputmode="numeric"
+                               placeholder="Buscar por cédula..." />
+                    </div>
+
+                    <div class="casos-campo">
+                        <label for="filtroEstado">Estado</label>
+
+                        <select id="filtroEstado" name="estadoFiltro" class="casos-input">
+                            <option value="">Todos los estados</option>
+                            @foreach (var estado in Model.Estados)
+                            {
+                                <option value="@estado.IdEstadoCaso"
+                                        selected="@(Model.EstadoSeleccionado == estado.IdEstadoCaso ? "selected" : null)">
+                                    @estado.Nombre
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="casos-btn casos-btn-filtrar">
+                        Buscar
+                    </button>
+
+                </div>
+
+            </form>
+
+            <div class="filtros-resultados">
+                Se muestran <strong>@Model.Casos.Count</strong> de <strong>@Model.Total</strong> casos
+            </div>
+
+        </section>
+       
+        <!-- Tabla -->
+        <section class="casos-tabla-card">
+
+            <div class="tabla-encabezado">
+                <div>
+                    <h2>Casos registrados</h2>
+                    <p>Información de los casos bajo su responsabilidad.</p>
+                </div>
+            </div>
+
+            <div class="tabla-scroll">
+
+                <table class="casos-tabla">
+
+                    <thead>
+                        <tr>
+                            <th>Identificación</th>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Origen</th>
+                            <th>Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Casos.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6">No hay casos registrados.</td>
+                            </tr>
+                        }
+
+                        @foreach (var caso in Model.Casos)
+                        {
+                            <tr>
+                                <td>
+                                    <strong class="caso-id">@caso.Codigo</strong>
+                                    <small>@caso.FechaApertura</small>
+                                </td>
+
+                                <td>
+                                    <div class="caso-usuario">
+                                        <span class="usuario-avatar">@caso.Iniciales</span>
+                                        <div>
+                                            <strong>@caso.Usuario</strong>
+                                            <small>@caso.CedulaParcial</small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="estado-badge @caso.ClaseEstado">
+                                        @caso.EstadoCaso
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="caso-origen">
+                                        <span class="origen-punto @(caso.DesdeAlerta ? "origen-alerta" : "origen-manual")"></span>
+                                        @(caso.DesdeAlerta ? "Alerta" : "Manual")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong class="fecha-actualizacion">@caso.Actualizacion</strong>
+                                    <small>Última asignación</small>
+                                </td>
+
+                                <td>
+                                    <div class="caso-acciones">
+                                        <button type="button"
+                                                class="caso-accion"
+                                                data-modal-open="modal-detalle"
+                                                data-caso-id="@caso.IdCaso">
+                                            Ver
+                                        </button>
+
+                                        <button type="button"
+                                                class="caso-accion"
+                                                data-modal-open="modal-estado"
+                                                data-caso-id="@caso.IdCaso"
+                                                data-estado-id="@caso.IdEstadoCaso">
+                                            Estado
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            @{
+                int primeraPagina = Math.Max(1, Model.Pagina - 2);
+                int ultimaPagina = Math.Min(Model.TotalPaginas, primeraPagina + 4);
+                primeraPagina = Math.Max(1, ultimaPagina - 4);
+            }
+
+            <footer class="casos-tabla-pie">
+                <span>Mostrando @Model.Casos.Count @(Model.Casos.Count == 1 ? "caso" : "casos")</span>
+
+                <div class="casos-paginacion">
+                    <button type="submit"
+                            form="filtrosCasos"
+                            name="pagina"
+                            value="@(Model.Pagina - 1)"
+                            disabled="@(Model.Pagina <= 1 ? "disabled" : null)">‹</button>
+
+                    @for (int i = primeraPagina; i <= ultimaPagina; i++)
+                    {
+                        <button type="submit"
+                                form="filtrosCasos"
+                                name="pagina"
+                                value="@i"
+                                class="@(i == Model.Pagina ? "pagina-activa" : null)">@i</button>
+                    }
+
+                    <button type="submit"
+                            form="filtrosCasos"
+                            name="pagina"
+                            value="@(Model.Pagina + 1)"
+                            disabled="@(Model.Pagina >= Model.TotalPaginas ? "disabled" : null)">›</button>
+                </div>
+            </footer>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Modal: Detalle del caso -->
+<div class="casos-modal-overlay" id="modal-detalle">
+
+    <section class="casos-modal casos-modal-detalle">
+
+        <header class="modal-header">
+            <div>
+                <span class="caso-id" id="detalleCodigo">CAS-</span>
+
+                <h2>Detalle del caso</h2>
+
+                <span class="estado-badge" id="detalleEstado">
+                    Cargando...
+                </span>
+            </div>
+
+            <button type="button"
+                    class="modal-cerrar"
+                    data-modal-close
+                    aria-label="Cerrar">
+                ×
+            </button>
+        </header>
+
+        <div class="modal-contenido">
+
+            <div id="mensajeDetalleCaso"
+                 class="casos-mensaje"
+                 style="display:none;">
+            </div>
+
+            <section class="modal-seccion">
+                <h3>Información general</h3>
+
+                <div class="detalle-grid">
+
+                    <div>
+                        <span>Usuario</span>
+                        <strong id="detalleUsuario">-</strong>
+                    </div>
+
+                    <div>
+                        <span>Cédula</span>
+                        <strong id="detalleCedula">-</strong>
+                    </div>
+
+                    <div>
+                        <span>Fecha de apertura</span>
+                        <strong id="detalleFecha">-</strong>
+                    </div>
+
+                    <div>
+                        <span>Responsable actual</span>
+                        <strong id="detalleResponsable">-</strong>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="modal-seccion">
+                <h3>Descripción del caso</h3>
+
+                <div class="detalle-descripcion"
+                     id="detalleDescripcion">
+                    Cargando información...
+                </div>
+            </section>
+
+            <section class="modal-seccion" id="detalleSeccionAlerta">
+
+                <h3>Alerta de origen</h3>
+
+                <div class="detalle-alerta">
+
+                    <strong id="detalleCodigoAlerta"></strong>
+
+                    <p id="detalleInfoAlerta"></p>
+
+                    <div>
+                        <span>Observaciones</span>
+
+                        <p id="detalleObservacionesAlerta"></p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="modal-seccion">
+
+                <h3>Historial de asignaciones</h3>
+
+                <div class="casos-timeline"
+                     id="detalleHistorial">
+
+                    <p>Cargando historial...</p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <footer class="modal-footer">
+
+            <button type="button"
+                    class="casos-btn casos-btn-secundario"
+                    id="btnAbrirReasignacion">
+                Reasignar
+            </button>
+
+            <button type="button"
+                    class="casos-btn casos-btn-principal"
+                    id="btnCambiarEstadoDetalle">
+                Cambiar estado
+            </button>
+
+        </footer>
+
+    </section>
+
+</div>
+
+<!-- Modal: Crear caso -->
+<div class="casos-modal-overlay"
+     id="modal-nuevo"
+     data-abrir-modal="@(TempData["AbrirModalNuevo"] is not null ? "true" : "false")"
+     data-usuarios-url="@Url.Content("~/personal/casos/usuarios/")">
+
+    <section class="casos-modal casos-modal-nuevo">
+
+        <header class="modal-header">
+
+            <div>
+                <h2>Registrar nuevo caso</h2>
+                <p>Elige el origen del caso y completa los datos básicos.</p>
+            </div>
+
+            <button type="button"
+                    class="modal-cerrar"
+                    data-modal-close
+                    aria-label="Cerrar">
+                ×
+            </button>
+
+        </header>
+
+        <div class="modal-contenido">
+
+            <!-- Origen del caso -->
+            <div class="origen-opciones">
+
+                <button type="button"
+                        class="origen-opcion @(origenInicial == "alerta" ? "seleccionada" : null)"
+                        data-origen="alerta">
+
+                    <span class="origen-icono">♧</span>
+
+                    <div>
+                        <strong>Desde una alerta</strong>
+                        <small>Vinculado a una alerta existente</small>
+                    </div>
+
+                </button>
+
+                <button type="button"
+                        class="origen-opcion @(origenInicial == "manual" ? "seleccionada" : null)"
+                        data-origen="manual">
+
+                    <span class="origen-icono">✎</span>
+
+                    <div>
+                        <strong>Registro manual</strong>
+                        <small>Sin alerta asociada</small>
+                    </div>
+
+                </button>
+
+            </div>
+
+            <form id="formCrearCaso"
+                  asp-controller="Personal"
+                  asp-action="CrearCaso"
+                  method="post"
+                  novalidate>
+
+                <input type="hidden"
+                       name="origen"
+                       id="nuevoOrigen"
+                       value="@origenInicial" />
+
+                <input type="hidden"
+                       name="returnUrl"
+                       value="@(Context.Request.Path.ToString() + Context.Request.QueryString.ToString())" />
+
+                <!-- Alerta -->
+                <div class="casos-campo"
+                     id="campoAlertaOrigen"
+                     style="@(origenInicial == "manual" ? "display:none" : null)">
+
+                    <label>Alerta de origen</label>
+
+                    <div class="alerta-seleccionada"
+                         id="alertaSeleccionada">
+
+                        <div>
+                            <strong id="alertaCodigoSeleccionado">
+                                Seleccione una alerta
+                            </strong>
+
+                            <small id="alertaDescripcionSeleccionada">
+                                No hay una alerta seleccionada
+                            </small>
+                        </div>
+
+                        <button type="button"
+                                id="btnSeleccionarAlerta"
+                                class="caso-accion">
+                            Cambiar
+                        </button>
+
+                    </div>
+
+                    <select id="nuevoCasoAlerta"
+                            name="idAlerta"
+                            class="casos-input"
+                            style="display:none">
+
+                        @if (hayAlertas)
+                        {
+                            <option value="">Seleccione una alerta</option>
+
+                            foreach (var alerta in Model.AlertasDisponibles)
+                            {
+                                <option value="@alerta.IdAlerta"
+                                        data-cedula="@alerta.CedulaUsuario"
+                                        data-usuario="@alerta.Usuario"
+                                        data-codigo="@alerta.Codigo"
+                                        data-fecha="@alerta.Fecha"
+                                        data-estado="@alerta.Estado"
+                                        data-riesgo="@alerta.NivelRiesgo"
+                                        data-observaciones="@alerta.Observaciones">
+                                    @alerta.Codigo · @alerta.Usuario · @alerta.Fecha
+                                </option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="" disabled>
+                                No hay alertas disponibles sin caso
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <!-- Usuario -->
+                <div class="casos-campo">
+
+                    <label for="nuevoCasoCedula">
+                        Usuario (cédula)
+                    </label>
+
+                    <div class="campo-combinado">
+
+                        <input type="text"
+                               id="nuevoCasoCedula"
+                               name="cedulaUsuario"
+                               class="casos-input"
+                               placeholder="Ingrese la cédula"
+                               inputmode="numeric"
+                               maxlength="12"
+                               autocomplete="off"
+                               required />
+
+                        <button type="button"
+                                id="btnBuscarUsuarioCaso"
+                                class="casos-btn casos-btn-secundario">
+                            Buscar
+                        </button>
+
+                    </div>
+
+                    <div id="resultadoUsuarioCaso"
+                         class="resultado-usuario"
+                         style="display:none">
+
+                        <span class="usuario-avatar"
+                              id="nuevoUsuarioIniciales">
+                            --
+                        </span>
+
+                        <div>
+                            <strong id="nuevoUsuarioNombre"></strong>
+
+                            <small id="nuevoUsuarioCedula"></small>
+
+                            <small id="nuevoUsuarioHistorial"></small>
+                        </div>
+
+                    </div>
+
+                    <div id="mensajeUsuarioCaso"
+                         class="mensaje-formulario"
+                         style="display:none">
+                    </div>
+
+                    <input type="hidden"
+                           id="nuevoCasoUsuarioEncontrado"
+                           name="idUsuario"
+                           value="" />
+
+                </div>
+
+                <!-- Estado y responsable -->
+                <div class="nuevo-caso-grid">
+
+                    <div class="casos-campo">
+
+                        <label for="nuevoCasoEstado">
+                            Estado inicial
+                        </label>
+
+                        <select id="nuevoCasoEstado"
+                                name="idEstadoCaso"
+                                class="casos-input"
+                                required>
+
+                            <option value="">
+                                Seleccione estado
+                            </option>
+
+                            @foreach (var estado in Model.Estados)
+                            {
+                                <option value="@estado.IdEstadoCaso">
+                                    @estado.Nombre
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="casos-campo">
+
+                        <label for="nuevoCasoResponsable">
+                            Responsable inicial
+                        </label>
+
+                        <input type="text"
+                               id="nuevoCasoResponsable"
+                               class="casos-input"
+                               value="Usted"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+                <!-- Observaciones -->
+                <div class="casos-campo">
+
+                    <label for="nuevoCasoDescripcion">
+                        Observaciones iniciales
+                    </label>
+
+                    <textarea id="nuevoCasoDescripcion"
+                              name="descripcion"
+                              class="casos-input"
+                              rows="3"
+                              maxlength="2000"
+                              minlength="5"
+                              placeholder="Describe brevemente el contexto del caso..."></textarea>
+
+                    <small class="casos-ayuda" id="ayudaDescripcion">
+                        Mínimo 5 caracteres. En un caso desde alerta, si se deja
+                        vacío se usan las observaciones de la alerta.
+                    </small>
+
+                </div>
+
+                <div id="mensajeCrearCaso"
+                     class="mensaje-formulario"
+                     style="display:none">
+                </div>
+
+            </form>
+
+        </div>
+
+        <footer class="modal-footer">
+
+            <button type="button"
+                    class="casos-btn casos-btn-secundario"
+                    data-modal-close>
+                Cancelar
+            </button>
+
+            <button type="submit"
+                    form="formCrearCaso"
+                    id="btnGuardarNuevoCaso"
+                    class="casos-btn casos-btn-principal">
+                Crear caso
+            </button>
+
+        </footer>
+
+    </section>
+
+</div>
+
+
+<!-- Modal: Cambiar estado -->
+<div class="casos-modal-overlay" id="modal-estado">
+    <section class="casos-modal casos-modal-pequeno">
+
+        <header class="modal-header">
+            <h2>Cambiar estado del caso</h2>
+            <button type="button"
+                    class="modal-cerrar"
+                    data-modal-close>
+                &times;
+            </button>
+        </header>
+
+        <form asp-controller="Personal"
+              asp-action="CambiarEstadoCaso"
+              method="post"
+              id="formCambiarEstado">
+
+            <div class="modal-contenido">
+
+                <input type="hidden"
+                       name="idCaso"
+                       id="estadoCasoId" />
+
+                <div class="casos-campo">
+                    <label for="estadoCasoSelect">Nuevo estado</label>
+
+                    <select class="casos-input"
+                            id="estadoCasoSelect"
+                            name="idEstadoCaso"
+                            required>
+
+                        <option value="">Seleccione un estado</option>
+
+                        @foreach (var estado in Model.Estados)
+                        {
+                            <option value="@estado.IdEstadoCaso">
+                                @estado.Nombre
+                            </option>
+                        }
+
+                    </select>
+                </div>
+
+                <div id="mensajeCambiarEstado"
+                     class="casos-mensaje"
+                     style="display:none;">
+                </div>
+
+            </div>
+
+            <footer class="modal-footer">
+
+                <button type="button"
+                        class="casos-btn casos-btn-secundario"
+                        data-modal-close>
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="casos-btn casos-btn-principal"
+                        id="btnGuardarEstado">
+                    Guardar cambios
+                </button>
+
+            </footer>
+
+        </form>
+
+    </section>
+</div>
+
+<!-- Modal: Reasignación -->
+<div class="casos-modal-overlay" id="modal-reasignar">
+
+    <section class="casos-modal casos-modal-pequeno">
+
+        <header class="modal-header">
+
+            <div>
+                <h2>Reasignar caso</h2>
+
+                <p>Seleccione al empleado que asumirá el caso.</p>
+            </div>
+
+            <button type="button"
+                    class="modal-cerrar"
+                    data-modal-close>
+                ×
+            </button>
+
+        </header>
+
+        <form asp-controller="Personal"
+              asp-action="ReasignarCaso"
+              method="post"
+              id="formReasignarCaso">
+
+            <div class="modal-contenido">
+
+                <input type="hidden"
+                       name="idCaso"
+                       id="reasignarCasoId" />
+
+                <div class="casos-campo">
+
+                    <label for="reasignarEmpleado">
+                        Nuevo responsable
+                    </label>
+
+                    <select class="casos-input"
+                            id="reasignarEmpleado"
+                            name="cedulaNuevoEmpleado"
+                            required>
+
+                        <option value="">
+                            Seleccione un empleado
+                        </option>
+
+                        @foreach (var empleado in Model.EmpleadosAsignables)
+                        {
+                            <option value="@empleado.Cedula">
+                                @empleado.Nombre
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div id="mensajeReasignarCaso"
+                     class="casos-mensaje"
+                     style="display:none;">
+                </div>
+
+            </div>
+
+            <footer class="modal-footer">
+
+                <button type="button"
+                        class="casos-btn casos-btn-secundario"
+                        data-modal-close>
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="casos-btn casos-btn-principal"
+                        id="btnConfirmarReasignacion">
+                    Confirmar reasignación
+                </button>
+
+            </footer>
+
+        </form>
+
+    </section>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/gestion-casos.js" asp-append-version="true"></script>
+    <script src="~/js/gestion-casos-detalle.js" asp-append-version="true"></script>
+}

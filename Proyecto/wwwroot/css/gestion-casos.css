@@ -1,0 +1,1378 @@
+
+/* Gestión de casos */
+
+.gestion-casos {
+    --tinta: #26243c;
+    --superficie: #fffdf8;
+    --acento: #4f3765;
+    --acento-suave: #f0e4ef;
+    --borde: #ded5ca;
+    --tenue: #655c6d;
+    --fondo: #f7f2ea;
+    display: grid;
+    grid-template-columns: 15.5rem minmax(0, 1fr);
+    gap: 1.8rem;
+    padding: 1.8rem 0 2.5rem;
+    color: var(--tinta);
+    font-family: system-ui, sans-serif;
+}
+
+/* Barra lateral */
+
+.casos-sidebar {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    min-height: 75vh;
+    padding: 1.1rem;
+    border: 1px solid var(--borde);
+    border-radius: 1.15rem;
+    background: var(--superficie);
+    box-shadow: 0 .35rem 1.2rem rgb(38 36 60 / 6%);
+}
+
+.casos-marca {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .4rem .2rem 1.2rem;
+}
+
+.casos-logo {
+    width: 2.2rem;
+    height: 2.2rem;
+    flex: none;
+    border-radius: 50% 50% 45% 12%;
+    background: linear-gradient(140deg, #ae86a4 48%, #4f3765 49%);
+}
+
+.casos-marca strong {
+    display: block;
+    font-size: .95rem;
+    line-height: 1.15;
+}
+
+.casos-marca small {
+    display: block;
+    color: var(--tenue);
+    font-size: .74rem;
+    line-height: 1.3;
+}
+
+.casos-menu {
+    display: grid;
+    gap: .15rem;
+}
+
+.menu-titulo {
+    padding: .9rem .6rem .4rem;
+    color: var(--tenue);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .65rem .7rem;
+    border-radius: .6rem;
+    color: var(--acento);
+    font-size: .87rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .menu-item:hover {
+        background: var(--acento-suave);
+    }
+
+    .menu-item.activo {
+        background: var(--acento);
+        color: white;
+    }
+
+    .menu-item.deshabilitado {
+        color: var(--tenue);
+        font-weight: 500;
+        cursor: default;
+    }
+
+        .menu-item.deshabilitado small {
+            font-size: .6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: .7;
+        }
+
+.casos-sidebar-nota {
+    margin-top: auto;
+    padding-top: 1rem;
+    color: var(--tenue);
+    font-size: .76rem;
+    line-height: 1.45;
+}
+
+/* Contenido */
+
+.casos-contenido {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 1.3rem;
+}
+
+.casos-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--tenue);
+    font-size: .85rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .casos-volver:hover {
+        color: var(--acento);
+    }
+
+.casos-encabezado {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.casos-eyebrow {
+    margin-bottom: .35rem;
+    color: var(--acento);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.casos-encabezado h1 {
+    margin: 0 0 .5rem;
+    font-family: Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.casos-descripcion {
+    max-width: 40rem;
+    color: var(--tenue);
+    font-size: .9rem;
+    line-height: 1.5;
+}
+
+.casos-acciones-principales {
+    margin-left: auto;
+    display: grid;
+    gap: .55rem;
+    min-width: 13rem;
+}
+
+/* Botones */
+
+.casos-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    padding: .65rem 1rem;
+    border: 1px solid transparent;
+    border-radius: .65rem;
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+
+.casos-btn-principal {
+    background: var(--acento);
+    color: white;
+    box-shadow: 0 3px 10px rgb(79 55 101 / 15%);
+}
+
+    .casos-btn-principal:hover {
+        background: #3e2b51;
+    }
+
+.casos-btn-secundario {
+    background: transparent;
+    border-color: #c9bad4;
+    color: var(--acento);
+}
+
+    .casos-btn-secundario:hover {
+        background: var(--acento-suave);
+    }
+
+/* Resumen */
+
+.casos-resumen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .9rem;
+}
+
+.resumen-card {
+    display: flex;
+    align-items: flex-start;
+    gap: .8rem;
+    padding: 1.05rem;
+    border: 1px solid var(--borde);
+    border-radius: .9rem;
+    background: var(--superficie);
+    box-shadow: 0 .3rem 1rem rgb(38 36 60 / 4%);
+}
+
+.resumen-indicador {
+    width: .55rem;
+    height: .55rem;
+    margin-top: .4rem;
+    border-radius: 50%;
+    flex: none;
+}
+
+.indicador-morado {
+    background: #8f6fae;
+}
+
+.indicador-amarillo {
+    background: #c99a3f;
+}
+
+.indicador-verde {
+    background: #6d9a72;
+}
+
+.indicador-gris {
+    background: #a49bab;
+}
+
+.resumen-numero {
+    display: block;
+    font-family: Georgia, serif;
+    font-size: 1.75rem;
+    line-height: 1.15;
+}
+
+.resumen-titulo {
+    display: block;
+    margin-top: .2rem;
+    font-size: .83rem;
+    font-weight: 600;
+}
+
+.resumen-card small {
+    display: block;
+    margin-top: .35rem;
+    color: var(--tenue);
+    font-size: .72rem;
+    line-height: 1.4;
+}
+
+/* Filtros */
+
+.casos-filtros {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--borde);
+    border-radius: .9rem;
+    background: var(--superficie);
+    box-shadow: 0 .3rem 1rem rgb(38 36 60 / 4%);
+}
+
+.filtros-estados {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: 1rem;
+}
+
+.filtros-label {
+    margin-right: .3rem;
+    color: var(--tenue);
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.filtro-chip {
+    padding: .35rem .75rem;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--tenue);
+    font-family: inherit;
+    font-size: .78rem;
+    cursor: pointer;
+}
+
+    .filtro-chip b {
+        margin-left: .2rem;
+        color: var(--tinta);
+    }
+
+    .filtro-chip.activo {
+        border-color: var(--acento);
+        background: var(--acento);
+        color: white;
+    }
+
+        .filtro-chip.activo b {
+            color: white;
+        }
+
+.filtros-formulario {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto;
+    gap: .8rem;
+    align-items: end;
+}
+
+.casos-campo {
+    display: grid;
+    gap: .4rem;
+    margin-bottom: .9rem;
+}
+
+    .casos-campo label {
+        color: var(--tenue);
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+.casos-input {
+    width: 100%;
+    min-width: 0;
+    padding: .65rem .75rem;
+    border: 1px solid var(--borde);
+    border-radius: .6rem;
+    background: white;
+    color: var(--tinta);
+    font-family: inherit;
+    font-size: .85rem;
+}
+
+    .casos-input:focus {
+        outline: 2px solid #d7c5e1;
+        border-color: var(--acento);
+    }
+
+.filtros-resultados {
+    margin-top: .8rem;
+    color: var(--tenue);
+    font-size: .78rem;
+}
+
+    .filtros-resultados strong {
+        color: var(--tinta);
+    }
+
+/* Tabla */
+
+.casos-tabla-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: .9rem;
+    background: var(--superficie);
+    box-shadow: 0 .3rem 1rem rgb(38 36 60 / 4%);
+}
+
+.tabla-encabezado {
+    padding: 1rem 1.2rem;
+}
+
+    .tabla-encabezado h2 {
+        font-family: Georgia, serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .tabla-encabezado p {
+        margin-top: .25rem;
+        color: var(--tenue);
+        font-size: .8rem;
+    }
+
+.tabla-scroll {
+    overflow-x: auto;
+}
+
+.casos-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .casos-tabla th {
+        padding: .75rem 1rem;
+        border-bottom: 1px solid var(--borde);
+        background: #fbf8f2;
+        color: var(--tenue);
+        font-size: .68rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-align: left;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .casos-tabla td {
+        padding: .85rem 1rem;
+        border-bottom: 1px solid #f0e9de;
+        font-size: .82rem;
+        vertical-align: middle;
+    }
+
+    .casos-tabla tbody tr:hover {
+        background: #faf5ee;
+    }
+
+    .casos-tabla tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .casos-tabla td > small {
+        display: block;
+        margin-top: .2rem;
+        color: var(--tenue);
+        font-size: .72rem;
+    }
+
+.caso-id {
+    display: block;
+    color: var(--acento);
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.caso-usuario {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+}
+
+.usuario-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--acento-suave);
+    color: var(--acento);
+    font-size: .7rem;
+    font-weight: 700;
+    flex: none;
+}
+
+.caso-usuario strong {
+    display: block;
+    font-size: .82rem;
+}
+
+.caso-usuario small {
+    display: block;
+    color: var(--tenue);
+    font-size: .7rem;
+}
+
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: .3rem .65rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.estado-abierto {
+    background: #ece4f4;
+    color: #5a4a78;
+}
+
+.estado-seguimiento {
+    background: #f6ecdc;
+    color: #7d5c25;
+}
+
+.estado-cerrado {
+    background: #efede7;
+    color: #6f6879;
+}
+
+.caso-origen {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--tenue);
+    font-size: .78rem;
+}
+
+.origen-punto {
+    width: .45rem;
+    height: .45rem;
+    border-radius: 50%;
+}
+
+.origen-alerta {
+    background: #b39cc4;
+}
+
+.origen-manual {
+    background: #c9beae;
+}
+
+.fecha-actualizacion {
+    display: block;
+    font-size: .78rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.caso-acciones {
+    display: flex;
+    gap: .25rem;
+}
+
+.caso-accion {
+    padding: .35rem .5rem;
+    border: none;
+    border-radius: .4rem;
+    background: transparent;
+    color: var(--acento);
+    font-family: inherit;
+    font-size: .75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .caso-accion:hover {
+        background: var(--acento-suave);
+    }
+
+/* Paginación */
+
+.casos-tabla-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .8rem 1rem;
+    border-top: 1px solid var(--borde);
+    background: #fbf8f2;
+    color: var(--tenue);
+    font-size: .78rem;
+}
+
+.casos-paginacion {
+    display: flex;
+    gap: .3rem;
+}
+
+    .casos-paginacion button {
+        min-width: 1.9rem;
+        height: 1.9rem;
+        padding: 0 .4rem;
+        border: 1px solid transparent;
+        border-radius: .45rem;
+        background: transparent;
+        color: var(--tenue);
+        cursor: pointer;
+    }
+
+        .casos-paginacion button:hover:not(:disabled) {
+            background: var(--acento-suave);
+        }
+
+        .casos-paginacion button:disabled {
+            opacity: .4;
+            cursor: default;
+        }
+
+    .casos-paginacion .pagina-activa {
+        background: var(--acento);
+        color: white;
+    }
+
+/* Modales */
+
+.casos-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgb(38 36 60 / 35%);
+    backdrop-filter: blur(2px);
+}
+
+    .casos-modal-overlay.visible {
+        display: flex;
+    }
+
+.casos-modal {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 40rem);
+    max-height: 90vh;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: 1rem;
+    background: var(--superficie);
+    box-shadow: 0 12px 44px rgb(38 36 60 / 18%);
+}
+
+.casos-modal-pequeno {
+    width: min(100%, 30rem);
+}
+
+.casos-modal-detalle {
+    width: min(100%, 34rem);
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid #ece4d8;
+}
+
+    .modal-header > div {
+        flex: 1;
+    }
+
+    .modal-header h2 {
+        font-family: Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 500;
+    }
+
+    .modal-header p {
+        margin-top: .3rem;
+        color: var(--tenue);
+        font-size: .8rem;
+    }
+
+.modal-cerrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--borde);
+    border-radius: .5rem;
+    background: white;
+    color: var(--tenue);
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+    .modal-cerrar:hover {
+        background: var(--acento-suave);
+        color: var(--acento);
+    }
+
+.modal-contenido {
+    padding: 1.25rem 1.4rem;
+    overflow-y: auto;
+}
+
+.modal-seccion {
+    margin-bottom: 1.4rem;
+}
+
+    .modal-seccion h3 {
+        margin-bottom: .8rem;
+        color: var(--tenue);
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .9rem;
+}
+
+    .detalle-grid span {
+        display: block;
+        color: var(--tenue);
+        font-size: .75rem;
+    }
+
+    .detalle-grid strong {
+        display: block;
+        margin-top: .2rem;
+        font-size: .85rem;
+    }
+
+.detalle-descripcion {
+    padding: .9rem;
+    border: 1px solid var(--borde);
+    border-radius: .65rem;
+    background: #fbf8f2;
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+.detalle-alerta {
+    padding: .9rem;
+    border: 1px solid #ddd0e6;
+    border-radius: .7rem;
+    background: #fbf7fc;
+}
+
+    .detalle-alerta p {
+        margin: .4rem 0;
+        color: var(--tenue);
+        font-size: .8rem;
+    }
+
+.casos-timeline {
+    display: grid;
+    gap: .9rem;
+    padding-left: .9rem;
+    border-left: 2px solid var(--borde);
+}
+
+.timeline-item {
+    display: grid;
+    gap: .2rem;
+}
+
+    .timeline-item strong {
+        font-size: .82rem;
+    }
+
+    .timeline-item small {
+        color: var(--tenue);
+        font-size: .74rem;
+    }
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+    padding: 1rem 1.4rem;
+    border-top: 1px solid #ece4d8;
+}
+
+/* Origen del caso */
+
+.origen-opciones {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .7rem;
+    margin-bottom: 1rem;
+}
+
+.origen-opcion {
+    display: grid;
+    gap: .3rem;
+    padding: .85rem;
+    border: 1px solid var(--borde);
+    border-radius: .7rem;
+    background: white;
+    color: var(--tinta);
+    text-align: left;
+    cursor: pointer;
+}
+
+    .origen-opcion strong {
+        font-size: .8rem;
+    }
+
+    .origen-opcion small {
+        color: var(--tenue);
+        font-size: .72rem;
+    }
+
+    .origen-opcion.seleccionada {
+        border-color: var(--acento);
+        background: var(--acento-suave);
+        color: var(--acento);
+    }
+
+.campo-combinado {
+    display: flex;
+    gap: .5rem;
+}
+
+    .campo-combinado .casos-input {
+        flex: 1;
+    }
+
+/* Responsive */
+
+@media (max-width: 1150px) {
+    .gestion-casos {
+        grid-template-columns: 13.5rem minmax(0, 1fr);
+        gap: 1rem;
+    }
+
+    .casos-resumen {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .casos-encabezado {
+        flex-direction: column;
+    }
+
+    .casos-acciones-principales {
+        margin-left: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 850px) {
+    .gestion-casos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .casos-sidebar {
+        position: static;
+        min-height: auto;
+    }
+
+    .casos-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .casos-sidebar-nota {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .casos-resumen {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .filtros-formulario {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .casos-menu {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .casos-tabla-pie {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .casos-acciones-principales {
+        display: grid;
+        width: 100%;
+    }
+
+    .origen-opciones {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .detalle-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .modal-footer {
+        flex-wrap: wrap;
+    }
+
+        .modal-footer .casos-btn {
+            flex: 1;
+        }
+
+
+}
+
+/* =========================================
+   REGISTRAR NUEVO CASO
+========================================= */
+
+#modal-nuevo {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+    #modal-nuevo .casos-modal-nuevo {
+        width: min(660px, 100%);
+        max-width: 660px;
+        max-height: min(90vh, 800px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+
+    #modal-nuevo .modal-header {
+        flex-shrink: 0;
+    }
+
+    #modal-nuevo .modal-contenido {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    #modal-nuevo .modal-footer {
+        flex-shrink: 0;
+    }
+
+    /* Opciones de origen */
+
+    #modal-nuevo .origen-opciones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    #modal-nuevo .origen-opcion {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        padding: 14px;
+        border: 1px solid var(--border-color, #ded4c8);
+        border-radius: 12px;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+        #modal-nuevo .origen-opcion:hover {
+            border-color: #68477e;
+        }
+
+        #modal-nuevo .origen-opcion.seleccionada {
+            border-color: #68477e;
+            background: #f0e6f2;
+        }
+
+        #modal-nuevo .origen-opcion > div {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        #modal-nuevo .origen-opcion strong {
+            font-size: 14px;
+        }
+
+        #modal-nuevo .origen-opcion small {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+
+    #modal-nuevo .origen-icono {
+        font-size: 20px;
+        color: #68477e;
+        flex-shrink: 0;
+    }
+
+    /* Alerta seleccionada */
+
+    #modal-nuevo .alerta-seleccionada {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid #dfcce8;
+        border-radius: 12px;
+        background: #fbf7fc;
+    }
+
+        #modal-nuevo .alerta-seleccionada > div {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        #modal-nuevo .alerta-seleccionada strong {
+            font-size: 14px;
+            color: #5b3b70;
+        }
+
+        #modal-nuevo .alerta-seleccionada small {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        #modal-nuevo .alerta-seleccionada button {
+            flex-shrink: 0;
+        }
+
+    /* Campo combinado */
+
+    #modal-nuevo .campo-combinado {
+        display: flex;
+        gap: 8px;
+    }
+
+        #modal-nuevo .campo-combinado input {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #modal-nuevo .campo-combinado button {
+            flex-shrink: 0;
+        }
+
+    /* Usuario encontrado */
+
+    #modal-nuevo .resultado-usuario {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        padding: 12px;
+        border: 1px solid #eadfce;
+        border-radius: 10px;
+        background: #faf7f1;
+    }
+
+        #modal-nuevo .resultado-usuario > div {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        #modal-nuevo .resultado-usuario strong {
+            font-size: 14px;
+        }
+
+        #modal-nuevo .resultado-usuario small {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+
+    /* Dos columnas */
+
+    #modal-nuevo .nuevo-caso-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    #modal-nuevo textarea {
+        resize: vertical;
+        min-height: 85px;
+    }
+
+    /* Mensajes */
+
+    #modal-nuevo .mensaje-formulario {
+        margin-top: 8px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+        #modal-nuevo .mensaje-formulario.error {
+            background: #fbeaea;
+            color: #a33a3a;
+        }
+
+        #modal-nuevo .mensaje-formulario.exito {
+            background: #eaf5ed;
+            color: #287344;
+        }
+
+        #modal-nuevo .mensaje-formulario.info {
+            background: #f0e8f4;
+            color: #68477e;
+        }
+
+    /* Botón cargando */
+
+    #modal-nuevo button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+/* Responsive */
+
+@media (max-width: 600px) {
+
+    #modal-nuevo {
+        padding: 10px;
+    }
+
+        #modal-nuevo .casos-modal-nuevo {
+            max-height: 95vh;
+            border-radius: 12px;
+        }
+
+        #modal-nuevo .origen-opciones,
+        #modal-nuevo .nuevo-caso-grid {
+            grid-template-columns: 1fr;
+        }
+}
+
+/* Avisos de la pantalla */
+
+.casos-aviso {
+    padding: .85rem 1rem;
+    border: 1px solid var(--borde, #ded5ca);
+    border-radius: .85rem;
+    background: var(--superficie, #fffdf8);
+    font-size: .88rem;
+}
+
+.casos-aviso-exito {
+    border-color: #b7d7b9;
+    background: #eef7ee;
+    color: #2f6b3a;
+}
+
+.casos-aviso-error {
+    border-color: #e3b9b9;
+    background: #fbeeee;
+    color: #8a2f2f;
+}
+
+#modal-nuevo .casos-ayuda {
+    color: var(--tenue, #655c6d);
+    font-size: .72rem;
+    line-height: 1.4;
+}
+/* =========================================
+   MODALES: DETALLE DEL CASO Y CAMBIAR ESTADO
+========================================= */
+
+/* Fondo oscuro y desenfocado */
+#modal-detalle,
+#modal-estado {
+    background: rgba(38, 36, 60, 0.40) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+    /* Fondo sólido crema de los modales */
+    #modal-detalle .casos-modal,
+    #modal-estado .casos-modal {
+        background-color: #fffdf8 !important;
+        color: #26243c;
+        opacity: 1;
+    }
+
+    /* Encabezado */
+    #modal-detalle .modal-header,
+    #modal-estado .modal-header {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Contenido */
+    #modal-detalle .modal-contenido,
+    #modal-estado .modal-contenido {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Pie de los modales */
+    #modal-detalle .modal-footer,
+    #modal-estado .modal-footer {
+        background-color: #f7f2ea !important;
+    }
+
+    /* Campos de formulario */
+    #modal-estado .casos-input {
+        background-color: #ffffff !important;
+        color: #26243c;
+    }
+
+    /* Descripción del caso */
+    #modal-detalle .detalle-descripcion {
+        background-color: #fbf8f2 !important;
+    }
+
+    /* Alerta del caso */
+    #modal-detalle .detalle-alerta {
+        background-color: #fbf7fc !important;
+    }
+
+    /* Historial */
+    #modal-detalle .casos-timeline {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Botón cerrar */
+    #modal-detalle .modal-cerrar,
+    #modal-estado .modal-cerrar {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Evitar transparencia en elementos internos */
+    #modal-detalle .modal-seccion,
+    #modal-estado .casos-campo {
+        background-color: transparent;
+    }
+    /* =========================================
+       CORRECCIÓN DE COLORES EN MODALES
+    ========================================= */
+
+    /* Fondo crema del modal Registrar nuevo caso */
+    #modal-nuevo .casos-modal {
+        background-color: #fffdf8 !important;
+        color: #26243c;
+        opacity: 1;
+    }
+
+    /* Encabezado del modal */
+    #modal-nuevo .modal-header {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Contenido del modal */
+    #modal-nuevo .modal-contenido {
+        background-color: #fffdf8 !important;
+    }
+
+    /* Pie del modal */
+    #modal-nuevo .modal-footer {
+        background-color: #f7f2ea !important;
+    }
+
+    /* Fondo borroso del modal Registrar nuevo caso */
+    #modal-nuevo {
+        background: rgba(38, 36, 60, 0.40) !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    /* Letras negras en botones de guardar */
+     #modal-estado #btnGuardarEstado,
+     #modal-nuevo #btnGuardarNuevoCaso,
+     #modal-detalle #btnCambiarEstadoDetalle {
+         color: #26243c !important;
+     }
+
+    /* Mantener los botones principales */
+     #modal-estado #btnGuardarEstado,
+     #modal-nuevo #btnGuardarNuevoCaso,
+     #modal-detalle #btnCambiarEstadoDetalle {
+         background-color: #f0e4ef !important;
+         border: 1px solid #c9bad4 !important;
+     }
+
+    /* Hover de los botones */
+     #modal-estado #btnGuardarEstado:hover,
+     #modal-nuevo #btnGuardarNuevoCaso:hover,
+     #modal-detalle #btnCambiarEstadoDetalle:hover {
+         background-color: #e5d6e8 !important;
+     }
+
+    /* Fondo crema de los campos */
+    #modal-nuevo .casos-input {
+        background-color: #ffffff !important;
+        color: #26243c !important;
+    }
+
+    /* Fondo de opciones de origen */
+    #modal-nuevo .origen-opcion {
+        background-color: #fbf8f2 !important;
+        color: #26243c !important;
+    }
+
+    /* Opción seleccionada */
+    #modal-nuevo .origen-opcion.seleccionada {
+    background-color: #f0e4ef !important;
+    }
+
+    /* Botón de cerrar */
+    #modal-nuevo .modal-cerrar {
+        background-color: #fffdf8 !important;
+        color: #26243c !important;
+    }
+
+    /* Borde café del selector de estado */
+    #modal-estado #estadoCasoSelect {
+        border: 1px solid #ded5ca !important;
+    }
+
+    /* Borde al seleccionar una opción */
+    #modal-estado #estadoCasoSelect:focus {
+        border-color: #ded5ca !important;
+        outline: 2px solid #d7c5e1;
+    }
+
+    /* =========================================
+       MODAL: REASIGNAR CASO
+    ========================================= */
+
+    /* Fondo oscuro y desenfocado */
+    #modal-reasignar {
+        background: rgba(38, 36, 60, 0.40) !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+     /* Fondo crema del modal */
+     #modal-reasignar .casos-modal {
+         background-color: #fffdf8 !important;
+         color: #26243c;
+     }
+
+     /* Encabezado */
+     #modal-reasignar .modal-header {
+         background-color: #fffdf8 !important;
+     }
+
+     /* Contenido */
+     #modal-reasignar .modal-contenido {
+         background-color: #fffdf8 !important;
+     }
+
+     /* Pie del modal */
+     #modal-reasignar .modal-footer {
+         background-color: #f7f2ea !important;
+     }
+
+     /* Selector de nuevo responsable */
+     #modal-reasignar .casos-input {
+         background-color: #ffffff !important;
+         color: #26243c !important;
+         border: 1px solid #ded5ca;
+     }
+
+      /* Borde café al seleccionar el empleado */
+      #modal-reasignar .casos-input:focus {
+          outline: 2px solid #d7c5e1;
+          border-color: #4f3765;
+      }
+
+      /* Botón de cerrar */
+      #modal-reasignar .modal-cerrar {
+          background-color: #fffdf8 !important;
+          color: #26243c !important;
+      }
+
+      /* Botón de confirmar reasignación */
+      #modal-reasignar #btnConfirmarReasignacion {
+          color: #26243c !important;
+          background-color: #f0e4ef !important;
+          border: 1px solid #c9bad4 !important;
+      }
+
+      #modal-reasignar #btnConfirmarReasignacion:hover {
+          background-color: #e5d6e8 !important;
+      }

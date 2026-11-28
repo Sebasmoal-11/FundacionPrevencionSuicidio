@@ -1,6 +1,8 @@
 @model Proyecto.ViewModels.AlertaDetalleViewModel
+
 @{
     Layout = "_Layout";
+
     var alerta = Model.Alerta;
     var analisis = alerta.IdAnalisisNavigation;
     var mensaje = analisis.IdMensajeNavigation;
@@ -16,120 +18,256 @@
         _ => "text-bg-secondary"
     };
 }
-<p>
-    <a asp-action="Index">&larr; Volver al listado de alertas</a>
-</p>
 
-<h1>Alerta @alerta.IdAlerta</h1>
-
-<partial name="_Mensajes" />
-
-<dl class="row">
-    <dt class="col-sm-3">Estado</dt>
-    <dd class="col-sm-9">
-        <span class="badge @ClaseEstado(alerta.IdEstadoAlertaNavigation.Nombre)">
-            @alerta.IdEstadoAlertaNavigation.Nombre
-        </span>
-    </dd>
-
-    <dt class="col-sm-3">Generada</dt>
-    <dd class="col-sm-9">@alerta.FechaGeneracion.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Nivel de riesgo</dt>
-    <dd class="col-sm-9">
-        @analisis.IdNivelRiesgoNavigation.Nombre
-        <span class="text-muted">(@analisis.IdNivelRiesgoNavigation.Descripcion)</span>
-    </dd>
-
-    <dt class="col-sm-3">Usuario</dt>
-    <dd class="col-sm-9">@Model.UsuarioNombre</dd>
-
-    <dt class="col-sm-3">Cédula del usuario</dt>
-    <dd class="col-sm-9">@Model.UsuarioCedula</dd>
-
-    <dt class="col-sm-3">Conversación</dt>
-    <dd class="col-sm-9">
-        #@conversacion.IdConversacion
-        <span class="text-muted">(iniciada el @conversacion.FechaInicio.ToString("dd/MM/yyyy HH:mm"))</span>
-    </dd>
-
-    <dt class="col-sm-3">Análisis</dt>
-    <dd class="col-sm-9">#@analisis.IdAnalisis del @analisis.FechaAnalisis.ToString("dd/MM/yyyy HH:mm")</dd>
-</dl>
-
-<h2 class="h4">Observaciones de la alerta</h2>
-<p class="border rounded p-2 bg-light" style="white-space: pre-wrap;">@(string.IsNullOrWhiteSpace(alerta.Observaciones) ? "Sin observaciones." : alerta.Observaciones)</p>
-
-<h2 class="h4">Resultado del análisis</h2>
-<p class="border rounded p-2 bg-light" style="white-space: pre-wrap;">@analisis.Resultado</p>
-
-<h2 class="h4">Mensaje que originó la alerta</h2>
-<p class="border rounded p-2 bg-light" style="white-space: pre-wrap;">@mensaje.Contenido</p>
-
-<h2 class="h4">Historial de revisiones</h2>
-@if (Model.Revisiones.Count == 0)
-{
-    <p class="text-muted">La alerta todavía no tiene revisiones registradas.</p>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-sm align-middle">
-            <thead>
-                <tr>
-                    <th scope="col">Fecha</th>
-                    <th scope="col">Revisada por</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var revision in Model.Revisiones)
-                {
-                    <tr>
-                        <td>@revision.FechaRevision.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@revision.EmpleadoNombre (@revision.CedulaEmpleado)</td>
-                        <td>
-                            <span class="badge @ClaseEstado(revision.Estado)">
-                                @revision.Estado
-                            </span>
-                        </td>
-                        <td style="white-space: pre-wrap;">@revision.Observaciones</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/alertas.css" asp-append-version="true" />
 }
 
-<h2 class="h4">Registrar revisión</h2>
-@if (Model.Destinos.Count == 0)
-{
-    <div class="alert alert-secondary" role="status">
-        Esta alerta no admite más cambios de estado.
-    </div>
-}
-else
-{
-    <form asp-action="CambiarEstado" asp-route-id="@alerta.IdAlerta" method="post" class="row g-3">
-        <div class="col-md-4">
-            <label class="form-label" for="idEstado">Nuevo estado</label>
-            <select id="idEstado" name="idEstado" class="form-select" required>
-                @foreach (var destino in Model.Destinos)
-                {
-                    <option value="@destino.IdEstadoAlerta">@destino.Nombre</option>
-                }
-            </select>
+<div class="alertas-page">
+
+    <p class="alerta-detalle-volver">
+        <a asp-action="Index">&larr; Volver al listado de alertas</a>
+    </p>
+
+    <header class="alertas-encabezado">
+        <p class="alertas-eyebrow">Monitoreo y atención</p>
+
+        <h1>Alerta @alerta.IdAlerta</h1>
+
+        <p class="alertas-descripcion">
+            Información detallada de la alerta, análisis generado
+            y seguimiento de las revisiones realizadas.
+        </p>
+    </header>
+
+    <partial name="_Mensajes" />
+
+    <section class="alerta-detalle-card">
+
+        <h2>Información de la alerta</h2>
+
+        <dl class="alerta-info-grid">
+
+            <div class="alerta-info-item">
+                <dt>Estado</dt>
+                <dd>
+                    <span class="badge @ClaseEstado(alerta.IdEstadoAlertaNavigation.Nombre)">
+                        @alerta.IdEstadoAlertaNavigation.Nombre
+                    </span>
+                </dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Generada</dt>
+                <dd>
+                    @alerta.FechaGeneracion.ToString("dd/MM/yyyy HH:mm")
+                </dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Nivel de riesgo</dt>
+                <dd>
+                    @analisis.IdNivelRiesgoNavigation.Nombre
+                    <span class="text-muted">
+                        (@analisis.IdNivelRiesgoNavigation.Descripcion)
+                    </span>
+                </dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Usuario</dt>
+                <dd>@Model.UsuarioNombre</dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Cédula del usuario</dt>
+                <dd>@Model.UsuarioCedula</dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Conversación</dt>
+                <dd>
+                    #@conversacion.IdConversacion
+                    <span class="text-muted">
+                        (iniciada el @conversacion.FechaInicio.ToString("dd/MM/yyyy HH:mm"))
+                    </span>
+                </dd>
+            </div>
+
+            <div class="alerta-info-item">
+                <dt>Análisis</dt>
+                <dd>
+                    #@analisis.IdAnalisis del
+                    @analisis.FechaAnalisis.ToString("dd/MM/yyyy HH:mm")
+                </dd>
+            </div>
+
+        </dl>
+
+    </section>
+
+    <section class="alerta-detalle-card">
+
+        <h2>Observaciones de la alerta</h2>
+
+        <div class="alerta-texto">
+            @(string.IsNullOrWhiteSpace(alerta.Observaciones)
+                ? "Sin observaciones."
+                : alerta.Observaciones)
         </div>
-        <div class="col-12">
-            <label class="form-label" for="observaciones">Observaciones</label>
-            <textarea id="observaciones" name="observaciones" class="form-control"
-                      rows="3" maxlength="1000" required
-                      placeholder="Describa el motivo del cambio de estado."></textarea>
-            <div class="form-text">Mínimo 5 caracteres. Queda registrado en el historial.</div>
+
+    </section>
+
+    <section class="alerta-detalle-card">
+
+        <h2>Resultado del análisis</h2>
+
+        <div class="alerta-texto">
+            @analisis.Resultado
         </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Guardar revisión</button>
+
+    </section>
+
+    <section class="alerta-detalle-card">
+
+        <h2>Mensaje que originó la alerta</h2>
+
+        <div class="alerta-texto">
+            @mensaje.Contenido
         </div>
-    </form>
-}
+
+    </section>
+
+    <section class="alerta-detalle-card">
+
+        <h2>Historial de revisiones</h2>
+
+        @if (Model.Revisiones.Count == 0)
+        {
+            <p class="alerta-historial-vacio">
+                La alerta todavía no tiene revisiones registradas.
+            </p>
+        }
+        else
+        {
+            <div class="table-responsive">
+
+                <table class="table align-middle alerta-historial-tabla">
+
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Revisada por</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Observaciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var revision in Model.Revisiones)
+                        {
+                            <tr>
+                                <td>
+                                    @revision.FechaRevision.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @revision.EmpleadoNombre
+                                    (@revision.CedulaEmpleado)
+                                </td>
+
+                                <td>
+                                    <span class="badge @ClaseEstado(revision.Estado)">
+                                        @revision.Estado
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="alerta-texto alerta-texto-tabla">
+                                        @revision.Observaciones
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
+
+    <section class="alerta-detalle-card">
+
+        <h2>Registrar revisión</h2>
+
+        @if (Model.Destinos.Count == 0)
+        {
+            <div class="alerta-sin-destinos" role="status">
+                Esta alerta no admite más cambios de estado.
+            </div>
+        }
+        else
+        {
+            <form asp-action="CambiarEstado"
+                  asp-route-id="@alerta.IdAlerta"
+                  method="post"
+                  class="alerta-formulario">
+
+                <div class="alerta-formulario-campo">
+
+                    <label class="form-label" for="idEstado">
+                        Nuevo estado
+                    </label>
+
+                    <select id="idEstado"
+                            name="idEstado"
+                            class="form-select"
+                            required>
+
+                        @foreach (var destino in Model.Destinos)
+                        {
+                            <option value="@destino.IdEstadoAlerta">
+                                @destino.Nombre
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="alerta-formulario-campo">
+
+                    <label class="form-label" for="observaciones">
+                        Observaciones
+                    </label>
+
+                    <textarea id="observaciones"
+                              name="observaciones"
+                              class="form-control"
+                              rows="3"
+                              maxlength="1000"
+                              required
+                              placeholder="Describa el motivo del cambio de estado."></textarea>
+
+                    <div class="alerta-formulario-ayuda">
+                        Mínimo 5 caracteres. Queda registrado en el historial.
+                    </div>
+
+                </div>
+
+                <div class="alerta-formulario-acciones">
+
+                    <button type="submit" class="btn btn-primary">
+                        Guardar revisión
+                    </button>
+
+                </div>
+
+            </form>
+        }
+
+    </section>
+
+</div>

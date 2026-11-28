@@ -9,8 +9,10 @@ En SSMS, ejecuta estos scripts en orden sobre la misma instancia:
 1. `DataBase/fundacion_prevencion.sql` para una base nueva.
 2. `DataBase/autenticacion.sql` para el estado activo y las sesiones revocables.
 3. `DataBase/chatbot.sql` para los emisores y los IDs de conversaciones y mensajes.
+4. `DataBase/administracion.sql` para los estados de las alertas.
+5. `DataBase/casos.sql` para la trazabilidad alerta-caso y los catálogos de casos.
 
-Usa una cuenta con acceso a las tablas de autenticación y del chatbot. Si reutilizas el usuario SQL de la aplicación anterior, también necesita actualizar `contrasena_hash` en `usuario` y `empleado` para actualizar hashes antiguos al iniciar sesión. El servicio conserva el formato scrypt estándar que generaba el módulo anterior y lo actualiza a PBKDF2 de ASP.NET tras un acceso válido. Las sesiones anteriores requieren volver a iniciar sesión.
+Usa una cuenta con acceso a las tablas de autenticación, del chatbot y de casos. Si reutilizas el usuario SQL de la aplicación anterior, también necesita actualizar `contrasena_hash` en `usuario` y `empleado` para actualizar hashes antiguos al iniciar sesión. El servicio conserva el formato scrypt estándar que generaba el módulo anterior y lo actualiza a PBKDF2 de ASP.NET tras un acceso válido. Las sesiones anteriores requieren volver a iniciar sesión.
 
 ## Ejecutar en local
 
